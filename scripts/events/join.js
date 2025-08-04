@@ -19,7 +19,7 @@ module.exports.run = async function({ api, event, Threads }) {
 
 	// ➤ Bot Join Welcome
 	if (event.logMessageData.addedParticipants.some(i => i.userFbId == api.getCurrentUserID())) {
-		const botName = global.config.BOTNAME || "IMRAN";
+		const botName = global.config.BOTNAME || "❣️দি্ঁল্ঁবা্ঁর্ঁ❣️";
 		const prefix = global.config.PREFIX;
 		const BOT_GIF_URL = 'https://i.postimg.cc/x1pSNNgk/adb8ddc0-de77-4261-b6ae-404550f22bd3.gif';
 
@@ -50,7 +50,7 @@ module.exports.run = async function({ api, event, Threads }) {
 
 ╔╦══•  •✠•❀•✠•  •══╦╗
 ♥ 𝐁𝐎𝐓'𝐬 𝐎𝐖𝐍𝐄𝐑 ♥
-				♕ 𝐈𝐦𝐫𝐚𝐧 𝐀𝐡𝐦𝐞𝐝 ♕
+				 ♕ 𝐒𝐀𝐊𝐈𝐁 ♕ 
 ╚╩══•  •✠•❀•✠•  •══╩╝
 		`;
 
@@ -102,7 +102,7 @@ module.exports.run = async function({ api, event, Threads }) {
 
 ╔╦══•  •✠•❀•✠•  •══╦╗
 ♥  𝐁𝐎𝐓'𝐬 𝐎𝐖𝐍𝐄𝐑 ♥
-				♥ 𝐈𝐦𝐫𝐚𝐧 𝐀𝐡𝐦𝐞𝐝 ♥
+				♥  ♕ 𝐒𝐀𝐊𝐈𝐁 ♕  ♥
 ╚╩══•  •✠•❀•✠•  •══╩╝`;
 
 			msg = msg
