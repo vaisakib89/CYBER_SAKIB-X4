@@ -1,21 +1,20 @@
-# 🤖 IMRAN BOT V4
+# 🤖 SAKIB BOT V4
 
-![IMRAN BOT Logo](https://raw.githubusercontent.com/MR-IMRAN-60/ImranBypass/refs/heads/main/imranbotlogo.png)
+![SAKIB BOT Logo](https://i.postimg.cc/x1pSNNgk/adb8ddc0-de77-4261-b6ae-404550f22bd3.gif)
 
 **🌟 Fully Customizable Facebook Messenger Bot**  
-**Premium Features • Easy to Use • Built with ❤️ by Imran Ahmed**
+**Premium Features • Easy to Use • Built with ❤️ by Sakib Vai**
 
 ## 👤 ABOUT ME
 
-- Name: ```IMRAN AHMED```</br> 
+- Name: ```Sakib Vai```</br> 
 - Age: ```20```</br>  
-- Facebook: [Imran Ahmed](https://www.facebook.com/Imran.Ahmed099).</br>
+- Facebook: [Sakib Vai](https://www.facebook.com/s.a.k.i.b.tsu.863539)</br>
 
 ## 🚀 STARTUP
 
 ```bash
 npm install
-```
 ```txt
 node main/catalogs/IMRANA.js
 ```
