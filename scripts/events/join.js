@@ -21,7 +21,7 @@ module.exports.run = async function({ api, event, Threads }) {
 	if (event.logMessageData.addedParticipants.some(i => i.userFbId == api.getCurrentUserID())) {
 		const botName = global.config.BOTNAME || "IMRAN";
 		const prefix = global.config.PREFIX;
-		const BOT_GIF_URL = 'https://raw.githubusercontent.com/MR-IMRAN-60/JSON-STORE/refs/heads/main/imbot.gif';
+		const BOT_GIF_URL = 'https://i.postimg.cc/x1pSNNgk/adb8ddc0-de77-4261-b6ae-404550f22bd3.gif';
 
 		await api.changeNickname(`${botName} ai`, threadID, api.getCurrentUserID());
 
