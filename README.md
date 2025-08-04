@@ -107,7 +107,7 @@ module.exports.run = async ({ api, event, args }) => {
 
 📁 RESOURCES
 
-GitHub Repository: Sakib-AI
+GitHub Repository: Sakib-ai
 
 > 💬 Developed with care by Sakib Vai & Ryuko
 
