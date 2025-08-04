@@ -6,20 +6,18 @@ module.exports.config = {
   description: "যখন কেউ তোমাকে ট্যাগ বা ডাকনাম দিয়ে ডাকে তখন বট অটোমেটিক রিপ্লাই দেয়",
   category: "utility",
   usages: "",
-  cooldowns: 5,
-  dependencies: {}
+  cooldowns: 5
 };
 
 module.exports.run = async function({ api, event }) {
   const { threadID, messageID, mentions, body } = event;
 
-  // টার্গেট ইউজারদের UID লিস্ট
+  // টার্গেট UID যার নাম বা ট্যাগে প্রতিক্রিয়া দেবে
   const targetUIDs = [
     "100090445581185",  // প্রথম ইউজার UID
-    "61576554697089"   // দ্বিতীয় ইউজার UID
+    "61576554697089"    // দ্বিতীয় ইউজার UID
   ];
 
-  // ডাকনাম বা নামের ভ্যারিয়েশন গুলো
   const nameKeywords = [
     "শাকিব",
     "সাকিব",
@@ -27,14 +25,12 @@ module.exports.run = async function({ api, event }) {
     "শাকিব স্যার"
   ];
 
-  // মেসেজে নাম আছে কিনা চেক করার জন্য
   function bodyContainsName(text) {
     if (!text) return false;
     text = text.toLowerCase();
     return nameKeywords.some(keyword => text.includes(keyword.toLowerCase()));
   }
 
-  // রিপ্লাই মেসেজগুলো
   const replyMessages = [
     "{mention}, ওরে বেটা! শাকিব ভাই কে ট্যাগ করছোস কেন? সাহস তো কম না তোর 😏",
     "{mention}, ভাই একটু দম নিন... শাকিব ভাই এখন ব্যস্ত, দয়া করে বিরক্ত কইরো না 😤",
@@ -58,7 +54,6 @@ module.exports.run = async function({ api, event }) {
     "{mention}, নাম দেখে call করিস, tag না করিস 😒"
   ];
 
-  // প্রথমে ট্যাগ চেক করব
   if (mentions && Object.keys(mentions).length > 0) {
     for (const id in mentions) {
       if (targetUIDs.includes(id)) {
@@ -69,11 +64,8 @@ module.exports.run = async function({ api, event }) {
     }
   }
 
-  // ট্যাগ না থাকলে মেসেজ বডি চেক করব নামের জন্য
   if (bodyContainsName(body)) {
-    // এখানে senderID থেকে senderName পাওয়া যায় না, তাই বেচারা @username এর বদলে "দোস্ত" বা "ভাই" দিয়ে দিবো
     const fallbackMention = "দোস্ত";
-
     const randomMsg = replyMessages[Math.floor(Math.random() * replyMessages.length)];
     const messageToSend = randomMsg.replace(/{mention}/g, fallbackMention);
     return api.sendMessage(messageToSend, threadID, messageID);
