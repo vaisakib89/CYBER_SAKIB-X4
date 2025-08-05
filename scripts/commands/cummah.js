@@ -1,9 +1,9 @@
 module.exports.config = {
   name: "cummah",
-  version: "1.0.1",
+  version: "1.0.2",
   permission: 0,
   credits: "Sakib Vai",
-  description: "উম্মাহ বার্তা ও reply delete",
+  description: "উম্মাহ বার্তা ও reply করলে মিষ্টি কথা",
   prefix: true,
   category: "fun",
   usages: "@mention",
@@ -58,19 +58,19 @@ module.exports.run = async function ({ api, event }) {
     }, threadID);
   }
 
-  // বট নিজে reply track করবে
+  // শুধু reply detect করে message পাঠাবে
   const botID = api.getCurrentUserID();
   repliedUsers.set(threadID, {
     userID: mentionID,
     botID: botID
   });
 
-  // reply handler একবারই বসানো হবে
+  // reply handler
   if (!global._cummahReplyHandlerSet) {
     global._cummahReplyHandlerSet = true;
 
     api.listenMqtt((callbackEvent) => {
-      const { senderID, threadID, messageID, messageReply } = callbackEvent;
+      const { senderID, threadID, messageReply } = callbackEvent;
 
       if (repliedUsers.has(threadID)) {
         const { userID, botID } = repliedUsers.get(threadID);
@@ -80,14 +80,10 @@ module.exports.run = async function ({ api, event }) {
           messageReply &&
           messageReply.senderID === botID
         ) {
-          api.unsendMessage(messageID, (err) => {
-            if (!err) {
-              api.sendMessage(
-                "🤫 কথা বইলোনা! শাকিব ভাই তুমাকে উম্মাহ দিতে বলছে তার পক্ষ থেকে 😘",
-                threadID
-              );
-            }
-          });
+          api.sendMessage(
+            "🤫 কথা বইলোনা! শাকিব ভাই তুমাকে উম্মাহ দিতে বলছে তার পক্ষ থেকে 😘",
+            threadID
+          );
 
           repliedUsers.delete(threadID);
         }
