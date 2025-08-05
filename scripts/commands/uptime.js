@@ -69,7 +69,7 @@ module.exports.run = async ({ api, event }) => {
           ping: `${ping}ms`,
           time: currentTime,
           date: currentDate,
-          owner: "IMRAN",
+          owner: "SAKIB",
         },
         timeout: 8000,
       });
