@@ -1,5 +1,7 @@
 module.exports.config = {
-  name: "উম্মাহ",
+  name: "isss",
+  version: "1.0.0",
+  permission",
   version: "1.0.0",
   permission: 0,
   credits: "Sakib Vai",
