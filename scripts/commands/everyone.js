@@ -3,7 +3,7 @@ module.exports.config = {
     version: "1.0.0",
     permission: 0,
     credits: "Sakib Vai",
-    description: "Mention everyone in the group with your custom text",
+    description: "Mention each member individually with your custom text",
     prefix: true,
     category: "group",
     usages: "-@everyone আপনার মেসেজ",
@@ -17,18 +17,16 @@ module.exports.run = async ({ api, event, args }) => {
     if (!text) return api.sendMessage("দয়া করে লিখুন: -@everyone আপনার মেসেজ", event.threadID);
 
     const threadInfo = await api.getThreadInfo(event.threadID);
-    const mentions = [];
-    let message = "";
 
     for (let participant of threadInfo.participantIDs) {
         if (participant != api.getCurrentUserID()) {
             const name = threadInfo.userInfo.find(u => u.id === participant)?.name || "Member";
-            mentions.push({ tag: name, id: participant });
-            message += "@" + name + " ";
+            const msg = {
+                body: `@${name} ${text}`,
+                mentions: [{ tag: name, id: participant }]
+            };
+            await new Promise(resolve => setTimeout(resolve, 500)); // প্রতিটি মেসেজে সামান্য বিরতি
+            api.sendMessage(msg, event.threadID);
         }
     }
-
-    message += text;
-
-    api.sendMessage({ body: message, mentions }, event.threadID);
 };
