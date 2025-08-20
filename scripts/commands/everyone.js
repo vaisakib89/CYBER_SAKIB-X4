@@ -25,7 +25,7 @@ module.exports.run = async ({ api, event, args }) => {
                 body: `@${name} ${text}`,
                 mentions: [{ tag: name, id: participant }]
             };
-            await new Promise(resolve => setTimeout(resolve, 1000); // 0.5 সেকেন্ড বিরতি
+            await new Promise(resolve => setTimeout(resolve, 1000)); // ১ সেকেন্ড বিরতি
             api.sendMessage(msg, event.threadID);
         }
     }
