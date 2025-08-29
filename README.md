@@ -1,6 +1,6 @@
 # 🤖 SAKIB BOT V4
 
-![Sakib Bot Logo](https://raw.githubusercontent.com/vaisakib89/Sakib-ai/main/20250804_160709.png)
+![Sakib Bot Logo](https://github.com/vaisakib89/CYBER_SAKIB-X4/blob/main/20250804_160709.png)
 
 **🌟 Fully Customizable Facebook Messenger Bot**  
 **Premium Features • Easy to Use • Built with ❤️ by Sakib Vai**
