@@ -9,7 +9,7 @@
 
 - Name: ```SAKIB VAI```</br> 
 - Age: ```20```</br>  
-- Facebook: [Sakib Vai](https://www.facebook.com/s.a.k.i.b.tsu.863539)</br>
+- Facebook: [id link](https://www.facebook.com/s.a.k.i.b.tsu.863539)</br>
 
 ## 🚀 STARTUP
 
