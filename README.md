@@ -1,4 +1,4 @@
-# 🤖 SAKIB BOT X4
+# 🤖 SAKIB BOT 4X
 
 ![Sakib Bot Logo](https://github.com/vaisakib89/CYBER_SAKIB-X4/blob/main/1756629994321.jpg)
 
@@ -9,7 +9,7 @@
 
 - Name: ```SAKIB VAI```</br> 
 - Age: ```20```</br>  
-- Facebook: [id link](https://www.facebook.com/s.a.k.i.b.tsu.863539)</br>
+- Facebook: [FACEBOOK ID LINK](https://www.facebook.com/s.a.k.i.b.tsu.863539)</br>
 
 ## 🚀 STARTUP
 
