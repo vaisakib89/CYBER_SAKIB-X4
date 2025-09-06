@@ -11,8 +11,11 @@ module.exports.config = {
 
 module.exports.run = async ({ api, event }) => {
     try {
+        // শুধুমাত্র মেসেজ বা রিপ্লাই ইভেন্টে চলবে
+        if (event.type !== "message" && event.type !== "message_reply") return;
+
         // আপনার UID
-        const ownerID = "100090445581185";
+        const ownerID = global.config.ownerID || "100090445581185";
 
         // যদি মেনশনে Owner থাকে
         if (event.mentions && event.mentions[ownerID]) {
@@ -23,6 +26,6 @@ module.exports.run = async ({ api, event }) => {
             );
         }
     } catch (e) {
-        console.log("Mention reply error: ", e);
+        console.log("Mention reply এরর: ", e);
     }
 };
