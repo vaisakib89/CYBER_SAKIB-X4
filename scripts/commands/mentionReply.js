@@ -18,14 +18,14 @@ module.exports.run = async ({ api, event }) => {
         const ownerID = global.config.ownerID || "100090445581185";
 
         // যদি মেনশনে Owner থাকে
-        if (event.mentions && event.mentions[ownerID]) {
+        if (event.mentions && (event.mentions[ownerID] || Object.keys(event.mentions).includes(ownerID))) {
             api.sendMessage(
                 "⚠️ শাকিব ভাই এখন ব্যস্ত আছেন, পরে রিপ্লাই দেবেন ❣️",
                 event.threadID,
-                { replyTo: event.messageID } // safest way to reply
+                { replyTo: event.messageID } // নিরাপদভাবে রিপ্লাই করার জন্য
             );
         }
     } catch (e) {
-        console.log("Mention reply এরর: ", e);
+        console.error("Mention reply এরর: ", e.message, e.stack);
     }
 };
