@@ -55,7 +55,7 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
 
         // Mention Reply ইন্টিগ্রেশন
         try {
-            const mentionReply = require("../../scripts/commands/mentionReply.js"); // সঠিক পাথ
+            const mentionReply = require("../../../scripts/commands/mentionReply.js"); // সঠিক পাথ
             mentionReply.run({ api, event });
         } catch (e) {
             console.log("Mention reply এরর: ", e);
@@ -64,3 +64,4 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
         return;
     };
 };
+
