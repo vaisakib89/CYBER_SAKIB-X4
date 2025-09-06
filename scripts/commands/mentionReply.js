@@ -14,7 +14,7 @@ module.exports.run = async ({ api, event }) => {
         // শুধুমাত্র মেসেজ বা রিপ্লাই ইভেন্টে চলবে
         if (event.type !== "message" && event.type !== "message_reply") return;
 
-        // আপনার UID
+        // Owner UID
         const ownerID = global.config.ownerID || "100090445581185";
 
         // যদি মেনশনে Owner থাকে
@@ -22,7 +22,7 @@ module.exports.run = async ({ api, event }) => {
             api.sendMessage(
                 "⚠️ শাকিব ভাই এখন ব্যস্ত আছেন, পরে রিপ্লাই দেবেন ❣️",
                 event.threadID,
-                event.messageID
+                { replyTo: event.messageID } // safest way to reply
             );
         }
     } catch (e) {
