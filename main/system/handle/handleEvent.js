@@ -12,25 +12,25 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
         var { senderID, threadID } = event;
         senderID = String(senderID);
         threadID = String(threadID);
-        const notApproved = `this box is not approved.\nuse "${PREFIX}request" to send a approval request from bot operators`;
+        const notApproved = `এই বক্সটি অনুমোদিত নয়।\n"${PREFIX}request" ব্যবহার করে বট অপারেটরদের কাছে অনুমোদনের অনুরোধ পাঠান`;
 
-        // Check if thread is approved
+        // থ্রেড অনুমোদিত কিনা চেক করা
         if (!APPROVED.includes(threadID) && approval) {
             return api.sendMessage(notApproved, threadID, async (err, info) => {
                 if (err) {
-                    return logger.error(`can't send the message`);
+                    return logger.error(`মেসেজ পাঠানো যায়নি`);
                 }
                 await new Promise(resolve => setTimeout(resolve, 5 * 1000));
                 return api.unsendMessage(info.messageID);
             });
         }
 
-        // Check if user or thread is banned, or inbox is disabled
+        // ইউজার বা থ্রেড ব্যান করা আছে কিনা, অথবা ইনবক্স নিষ্ক্রিয় কিনা চেক করা
         if (userBanned.has(senderID) || threadBanned.has(threadID) || (allowInbox === false && senderID == threadID)) {
             return;
         }
 
-        // Handle events
+        // ইভেন্ট হ্যান্ডলিং
         for (const [key, value] of events.entries()) {
             if (value.config.eventType.indexOf(event.logMessageType) !== -1) {
                 const eventRun = events.get(key);
@@ -53,12 +53,12 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
             }
         }
 
-        // Mention Reply Integration
+        // Mention Reply ইন্টিগ্রেশন
         try {
-            const mentionReply = require("./command/mentionReply.js"); // Ensure correct path
+            const mentionReply = require("../../scripts/commands/mentionReply.js"); // সঠিক পাথ
             mentionReply.run({ api, event });
         } catch (e) {
-            console.log("Mention reply error: ", e);
+            console.log("Mention reply এরর: ", e);
         }
 
         return;
