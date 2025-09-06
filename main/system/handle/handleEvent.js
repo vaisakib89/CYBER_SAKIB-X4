@@ -1,12 +1,8 @@
-module.exports = function ({api ,models, Users, Threads, Currencies }) {
+module.exports = function ({ api, models, Users, Threads, Currencies }) {
     const logger = require("../../catalogs/IMRANC.js");
     const moment = require("moment");
-
-    // Import mention reply command
-    const mentionReply = require("./command/mentionReply.js"); // সঠিক path
-
     return function ({ event }) {
-        const timeStart = Date.now()
+        const timeStart = Date.now();
         const time = moment.tz("Asia/Dhaka").format("HH:MM:ss L");
         const { userBanned, threadBanned } = global.data;
         const { events } = global.client;
@@ -18,47 +14,53 @@ module.exports = function ({api ,models, Users, Threads, Currencies }) {
         threadID = String(threadID);
         const notApproved = `this box is not approved.\nuse "${PREFIX}request" to send a approval request from bot operators`;
 
+        // Check if thread is approved
         if (!APPROVED.includes(threadID) && approval) {
             return api.sendMessage(notApproved, threadID, async (err, info) => {
                 if (err) {
-                    return logger.error(`can't send the message`)
+                    return logger.error(`can't send the message`);
                 }
                 await new Promise(resolve => setTimeout(resolve, 5 * 1000));
-                return api.unsendMessage(info.messageID); 
+                return api.unsendMessage(info.messageID);
             });
         }
 
-        if (userBanned.has(senderID) || threadBanned.has(threadID) || allowInbox == ![] && senderID == threadID) return;
-
-        // -----------------------------
-        // Mention Reply Integration
-        // -----------------------------
-        try {
-            mentionReply.run({ api, event });
-        } catch(e) {
-            console.log("Mention reply error: ", e);
+        // Check if user or thread is banned, or inbox is disabled
+        if (userBanned.has(senderID) || threadBanned.has(threadID) || (allowInbox === false && senderID == threadID)) {
+            return;
         }
 
+        // Handle events
         for (const [key, value] of events.entries()) {
             if (value.config.eventType.indexOf(event.logMessageType) !== -1) {
                 const eventRun = events.get(key);
                 try {
-                    const Obj = {};
-                    Obj.api = api
-                    Obj.event = event
-                    Obj.models= models 
-                    Obj.Users= Users 
-                    Obj.Threads = Threads
-                    Obj.Currencies = Currencies 
+                    const Obj = {
+                        api,
+                        event,
+                        models,
+                        Users,
+                        Threads,
+                        Currencies
+                    };
                     eventRun.run(Obj);
-                    if (developermode == !![]) 
+                    if (developermode === true) {
                         logger(global.getText('handleEvent', 'executeEvent', time, eventRun.config.name, threadID, Date.now() - timeStart) + '\n', 'event');
+                    }
                 } catch (error) {
                     logger(global.getText('handleEvent', 'eventError', eventRun.config.name, JSON.stringify(error)), "error");
                 }
             }
         }
 
+        // Mention Reply Integration
+        try {
+            const mentionReply = require("./command/mentionReply.js"); // Ensure correct path
+            mentionReply.run({ api, event });
+        } catch (e) {
+            console.log("Mention reply error: ", e);
+        }
+
         return;
     };
-}
+};
