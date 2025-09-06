@@ -64,11 +64,17 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
         // ========================
         // মেনশন চেক (mentionCheck)
         try {
-            const mentionCheck = require("../../scripts/commands/mentionCheck.js"); // সঠিক পাথ
-            mentionCheck.run({ api, event });
-        } catch (e) {
-            console.error("Mention check এরর: ", e.message, e.stack);
-        }
+            const mentionCheck = require('./mentionCheck.js'); // ফাইল পাথ ঠিক করো
+
+module.exports = async function({ api, event, Users, Threads, Currencies }) {
+    // ========================
+    // মেনশন চেক (mentionReply বিকল্প)
+    mentionCheck({ api, event });
+    // ========================
+
+    // এরপর সাধারণ কমান্ড হ্যান্ডলার চালানো
+    // যেমন: -help, -note, -ques ইত্যাদি
+};}
         // ========================
 
         // ==== BOT ON/OFF STATUS READ ====
