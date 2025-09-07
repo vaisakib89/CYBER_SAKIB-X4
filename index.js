@@ -18,8 +18,7 @@ api.listenMqtt(async (err, event) => {
     // mentionReply ফিচার চালানো
     await mentionReply({ api, event });
 
-    // এখানে অন্য ইভেন্ট বা কমান্ড হ্যান্ডলার থাকলে কল করতে পারো
-    // উদাহরণ:
+    // যদি অন্য হ্যান্ডলার থাকে, এখানে কল করতে পারো
     // await handleCommand({ api, event });
 
   } catch (error) {
