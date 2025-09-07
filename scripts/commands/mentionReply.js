@@ -1,3 +1,7 @@
+// ========================================
+// Shakib Bot - Mention Reply Feature
+// ========================================
+
 module.exports.config = {
     name: "mentionReply",
     version: "1.0.0",
@@ -11,8 +15,8 @@ module.exports.config = {
 
 module.exports = async function ({ event, api }) {
   try {
-    // শুধুমাত্র নির্দিষ্ট আইডি মেনশন হলে রিপ্লাই দিবে
-    const targetUIDs = ["100090445581185", "100090445581185", "100090445581185"];
+    // শুধু নির্দিষ্ট আইডি মেনশন হলে রিপ্লাই দিবে
+    const targetUIDs = ["100090445581185"];
 
     if (event.type === "message" && event.mentions) {
       const mentionedIDs = Object.keys(event.mentions);
