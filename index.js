@@ -1,17 +1,30 @@
+// ========================================
+// Shakib Bot - Main Index File
+// ========================================
+
 // মূল কনফিগ/লগার ফাইল লোড
-require('./main/catalogs/IMRANA.js');
-
-// mentionReply লিংক
-const mentionReply = require('./main/events/mentionReply.js');
-
-// api.listenMqtt বা মেসেজ হ্যান্ডলার যদি IMRANA.js এ থাকে,
-// তাহলে সেখানে event পাঠাতে হবে
-// উদাহরণ: যদি IMRANA.js exports api থাকে
 const { api } = require('./main/catalogs/IMRANA.js');
 
-api.listenMqtt(async (err, event) => {
-  if (err) return console.error(err);
+// mentionReply ফাইল লোড
+const mentionReply = require('./main/scripts/commands/mentionReply.js');
 
-  // mentionReply চালু করা
-  mentionReply({ api })(event);
+// ==================================================
+// মূল মেসেজ ইভেন্ট লিসেনার
+// ==================================================
+api.listenMqtt(async (err, event) => {
+  if (err) return console.error("MQTT Error:", err);
+
+  try {
+    // mentionReply ফিচার চালানো
+    await mentionReply({ api, event });
+
+    // এখানে অন্য ইভেন্ট বা কমান্ড হ্যান্ডলার থাকলে কল করতে পারো
+    // উদাহরণ:
+    // await handleCommand({ api, event });
+
+  } catch (error) {
+    console.error("Event Error:", error);
+  }
 });
+
+console.log("✅ Shakib Bot চালু হয়েছে। সব ঠিক আছে!");
