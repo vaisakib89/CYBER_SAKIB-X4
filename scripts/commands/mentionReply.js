@@ -18,20 +18,27 @@ const cuteReplies = [
 
 module.exports.run = async function({ api, event }) {
   try {
-    const { mentions, threadID } = event;
+    const { threadID, mentions, body } = event;
+
+    // ডিবাগ: Messenger থেকে আসা data দেখাও
+    console.log("Event body:", body);
+    console.log("Mentions:", mentions);
 
     // যদি মেনশন থাকে
     if (mentions && Object.keys(mentions).length > 0) {
       const userIDs = Object.keys(mentions);
 
       for (let id of userIDs) {
+        const userName = mentions[id];  // Messenger থেকে নাম
         const reply = cuteReplies[Math.floor(Math.random() * cuteReplies.length)];
-        const userName = mentions[id]; // Messenger API থেকে সরাসরি নাম
 
+        // মেসেজ পাঠাও
         await api.sendMessage({
           body: `${userName}, ${reply}`,
           mentions: [{ tag: userName, id }]
         }, threadID);
+
+        console.log(`Replied to ${userName} (${id}) with: ${reply}`);
       }
     }
   } catch (err) {
