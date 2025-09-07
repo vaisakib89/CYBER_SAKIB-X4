@@ -9,23 +9,25 @@ module.exports.config = {
     usages: "",
 };
 
-module.exports.run = async ({ api, event }) => {
-    try {
-        // শুধুমাত্র মেসেজ বা রিপ্লাই ইভেন্টে চলবে
-        if (event.type !== "message" && event.type !== "message_reply") return;
+module.exports = async function ({ event, api }) {
+  try {
+    // শুধুমাত্র নির্দিষ্ট আইডি মেনশন হলে রিপ্লাই দিবে
+    const targetUIDs = ["100090445581185", "100090445581185", "100090445581185"];
 
-        // Owner UID
-        const ownerID = global.config.ownerID || "100090445581185";
+    if (event.type === "message" && event.mentions) {
+      const mentionedIDs = Object.keys(event.mentions);
+      const found = targetUIDs.find(uid => mentionedIDs.includes(uid));
 
-        // যদি মেনশনে Owner থাকে
-        if (event.mentions && (event.mentions[ownerID] || Object.keys(event.mentions).includes(ownerID))) {
-            api.sendMessage(
-                "⚠️ শাকিব ভাই এখন ব্যস্ত আছেন, পরে রিপ্লাই দেবেন ❣️",
-                event.threadID,
-                { replyTo: event.messageID } // নিরাপদভাবে রিপ্লাই করার জন্য
-            );
-        }
-    } catch (e) {
-        console.error("Mention reply এরর: ", e.message, e.stack);
+      if (found) {
+        let name = event.mentions[found] || "Special User";
+        api.sendMessage(
+          `⚡ তুমি ${name} কে মেনশন করেছো! সাবধানে কথা বলো!`,
+          event.threadID,
+          event.messageID
+        );
+      }
     }
+  } catch (e) {
+    console.log("MentionReply Error:", e);
+  }
 };
