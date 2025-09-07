@@ -1,7 +1,3 @@
-// ========================================
-// Shakib Bot - Mention Reply Feature
-// ========================================
-
 module.exports.config = {
     name: "mentionReply",
     version: "1.0.0",
@@ -14,24 +10,26 @@ module.exports.config = {
 };
 
 module.exports = async function ({ event, api }) {
-  try {
-    // শুধু নির্দিষ্ট আইডি মেনশন হলে রিপ্লাই দিবে
-    const targetUIDs = ["100090445581185"];
+    try {
+        // শুধুমাত্র এই UID মেনশন হলে রিপ্লাই
+        const targetUIDs = ["100090445581185"];
 
-    if (event.type === "message" && event.mentions) {
-      const mentionedIDs = Object.keys(event.mentions);
-      const found = targetUIDs.find(uid => mentionedIDs.includes(uid));
+        if (event.type === "message" && event.mentions) {
+            const mentionedIDs = Object.keys(event.mentions);
+            const found = targetUIDs.find(uid => mentionedIDs.includes(uid));
 
-      if (found) {
-        let name = event.mentions[found] || "Special User";
-        api.sendMessage(
-          `⚡ তুমি ${name} কে মেনশন করেছো! সাবধানে কথা বলো!`,
-          event.threadID,
-          event.messageID
-        );
-      }
+            if (found) {
+                let name = event.mentions[found] || "Special User";
+
+                // Send reply
+                api.sendMessage(
+                    `⚡ তুমি ${name} কে মেনশন করেছো! সাবধানে কথা বলো!`,
+                    event.threadID,
+                    event.messageID
+                );
+            }
+        }
+    } catch (e) {
+        console.log("MentionReply Error:", e);
     }
-  } catch (e) {
-    console.log("MentionReply Error:", e);
-  }
 };
