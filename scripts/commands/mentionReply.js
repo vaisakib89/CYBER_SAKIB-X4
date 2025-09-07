@@ -3,20 +3,20 @@ module.exports.config = {
   version: "1.0.0",
   permission: 0, // সকল ব্যবহারকারীর জন্য
   credits: "Shakib",
-  description: "Auto reply when someone writes @S　A　K　I　B　ツ",
-  prefix: false, // prefix-free
+  description: "Auto reply whenever someone mentions anyone in chat",
+  prefix: false,
   category: "auto",
   usages: "",
 };
 
 module.exports.run = async function({ api, event }) {
   try {
-    const body = event.body || "";
+    const mentions = event.mentions; // Messenger API থেকে mentions নেয়া হয়
 
-    // স্পেস এবং ইউনিকোড মেনশন মিলানো
-    if (body.includes("@S　A　K　I　B　ツ")) {
+    // যদি মেনশন থাকে
+    if (mentions && Object.keys(mentions).length > 0) {
       await api.sendMessage(
-        "হ্যাঁ ভাই! আমি এখানে আছি 😎", 
+        "হ্যাঁ ভাই! আমি মেনশন দেখেছি 😎",
         event.threadID
       );
     }
