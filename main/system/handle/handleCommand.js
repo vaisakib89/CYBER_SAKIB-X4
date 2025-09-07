@@ -42,20 +42,21 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
     }
   }
 
-  // Mention reply handler function
-  async function handleMentionReply(event) {
+  // ==========================
+  // 🔹 Mention Reply Handler (শাকিব ভাই ট্যাগ হ্যান্ডলার)
+  // ==========================
+  async function handleMentionReply({ event, api }) {
     try {
-      const { body = "", threadID, messageID, senderID } = event;
+      const { threadID, messageID, senderID, mentions } = event;
 
-      // ==========================
-      // 🔥 শুধুমাত্র নির্দিষ্ট UID গুলোর জন্য 🔥
-      // ==========================
+      // 🔹 শুধু নির্দিষ্ট UID গুলোর জন্য
       const TARGET_UIDS = [
         "100090445581185",
         "61576554697089",
         "100052951819398"
       ];
 
+      // 🔹 Reply তালিকা
       const replies = [
         "ওরে বেটা! শাকিব ভাই কে ডাকছো কেন? সাহস তো কম না তোর 😏",
         "ভাই একটু দম নিন... শাকিব ভাই এখন ব্যস্ত, দয়া করে বিরক্ত কইরো না 😤",
@@ -79,15 +80,18 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
         "নাম দেখে call করিস, tag না করিস 😒"
       ];
 
-      // ==========================
-      // 🔹 Check if sender is in TARGET_UIDS
-      // ==========================
-      if (TARGET_UIDS.includes(senderID)) {
-        const randomReply = replies[Math.floor(Math.random() * replies.length)];
-        return api.sendMessage(randomReply, threadID, messageID);
+      // 🔹 যদি মেনশন থাকে এবং তা TARGET_UIDS এর মধ্যে হয়
+      if (mentions) {
+        const mentionedUIDs = Object.keys(mentions);
+        const targetMentioned = mentionedUIDs.some(uid => TARGET_UIDS.includes(uid));
+
+        if (targetMentioned) {
+          const randomReply = replies[Math.floor(Math.random() * replies.length)];
+          return api.sendMessage(randomReply, threadID, messageID);
+        }
       }
 
-      // অন্য কোনো মেনশন বা সাধারণ টেক্সট হলে কোনো reply যাবে না
+      // অন্য মেনশন বা সাধারণ টেক্সট হলে কোনো reply যাবে না
       return;
 
     } catch (err) {
@@ -114,9 +118,6 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
     const replyAD = 'mode - only bot admin can use bot';
     const notApproved = `this box is not approved.\nuse "${PREFIX}request" to send a approval request from bot operators`;
 
-    // ==== Mention Reply Check (before bot status) ====
-    await handleMentionReply(event);
-
     // ==== BOT ON/OFF STATUS READ ====
     const botStatusData = await readBotStatus();
     const botIsOn = botStatusData.status === "on";
@@ -125,6 +126,10 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
     if (!botIsOn) {
       if (commandName !== `${PREFIX}boton` && commandName !== `${PREFIX}botoff`) {
         // বট অফ তাই অন্য কমান্ড ব্লক করো
+        // Mention reply এখানে চেক করো, কারণ এটা command নয়
+        if (event.mentions) {
+          await handleMentionReply({ event, api });
+        }
         return;
       }
     }
@@ -132,17 +137,13 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
     // ==== BOT ON/OFF COMMANDS HANDLE ====
     if (commandName === `${PREFIX}boton` || commandName === `${PREFIX}botoff`) {
       // পারমিশন চেক (শুধুমাত্র ADMINBOT এবং OWNER ইউজ করতে পারবে)
-      if (ADMINBOT.includes(senderID) || OWNER.includes(senderID)) {
-        if (commandName === `${PREFIX}boton`) {
-          await writeBotStatus("on");
-          return api.sendMessage("Bot is now ON ✅", threadID, messageID);
-        }
-        else if (commandName === `${PREFIX}botoff`) {
-          await writeBotStatus("off");
-          return api.sendMessage("Bot is now OFF ❌", threadID, messageID);
-        }
-      } else {
-        return api.sendMessage("You don't have permission to use this command.", threadID, messageID);
+      if (commandName === `${PREFIX}boton`) {
+        await writeBotStatus("on");
+        return api.sendMessage("Bot is now ON ✅", threadID, messageID);
+      }
+      else if (commandName === `${PREFIX}botoff`) {
+        await writeBotStatus("off");
+        return api.sendMessage("Bot is now OFF ❌", threadID, messageID);
       }
     }
 
@@ -343,6 +344,15 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
         return lang;
       };
     else getText2 = () => { };
+
+    // Mention reply চেক (command না হলে বা সবসময় চালানো যায় যদি mentions থাকে)
+    if (event.mentions) {
+      await handleMentionReply({ event, api });
+      // যদি mention reply পাঠানো হয়েছে, তাহলে command execute না করো (যদি command না হয়)
+      if (!command) {
+        return;
+      }
+    }
 
     try {
       const Obj = {
