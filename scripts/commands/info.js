@@ -21,11 +21,11 @@ module.exports.config = {
 
 module.exports.run = async ({ api, event, args }) => {
   const adminInfo = {
-    name: "Imran Ahmed",
+    name: "♕ 𝐒𝐀𝐊𝐈𝐁 ♕",
     city: "Dhaka, Bangladesh",
     work: "Web Developer & Bot Creator",
-    whatsapp: "wa.me/+8801689903267",
-    facebook: "https://facebook.com/Imran.Ahmed099"
+    whatsapp: "wa.me/+8801932556310",
+    facebook: "https://www.facebook.com/s.a.k.i.b.tsu.863539"
   };
 
   const botVersion = global.config.version || "2.0.0";
@@ -48,7 +48,7 @@ module.exports.run = async ({ api, event, args }) => {
 ❖ 𝗩𝗲𝗿𝘀𝗶𝗼𝗻: 『 ${botVersion} 』
 ❖ 𝗨𝗽𝘁𝗶𝗺𝗲: 『 ${uptime} 』
 ❖ 𝗖𝗼𝗱𝗲𝗿: 『 ${adminInfo.name} 』
-❖ 𝗙𝗿𝗮𝗺𝗲𝘄𝗼𝗿𝗸: 『 IMRAN-API 』
+❖ 𝗙𝗿𝗮𝗺𝗲𝘄𝗼𝗿𝗸: 『 𝐒𝐀𝐊𝐈𝐁-API 』
 `.trim();
 
   const imagePath = __dirname + "/cache/admin.png";
