@@ -3,10 +3,10 @@ const request = require("request");
 
 module.exports.config = {
   name: "offer",
-  version: "1.1.0",
+  version: "1.0.0",
   permission: 0,
   credits: "Shakib",
-  description: "Send Messenger Bot Collection offer with creative buttons",
+  description: "Send Messenger Bot Collection offer with image and buttons",
   prefix: true,
   category: "INFO",
   usages: "offer",
@@ -54,17 +54,17 @@ module.exports.run = async ({ api, event, args }) => {
             type: "button",
             payload: {
               template_type: "button",
-              text: "📲 যোগাযোগ করতে নিচের বাটনে ক্লিক করুন!",
+              text: "Messenger বা WhatsApp-এ যোগাযোগ করতে এখানে ক্লিক করুন",
               buttons: [
                 {
                   type: "web_url",
                   url: "https://m.me/s.a.k.i.b.tsu.863539",
-                  title: "💬 Messenger"
+                  title: "Messenger"
                 },
                 {
                   type: "web_url",
                   url: "https://wa.me/8801920826878",
-                  title: "📞 WhatsApp"
+                  title: "WhatsApp"
                 }
               ]
             }
