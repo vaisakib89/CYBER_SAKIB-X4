@@ -3,10 +3,10 @@ const request = require("request");
 
 module.exports.config = {
   name: "offer",
-  version: "1.0.0",
+  version: "1.1.0",
   permission: 0,
   credits: "Shakib",
-  description: "Send Messenger Bot Collection offer with image",
+  description: "Send Messenger Bot Collection offer with creative buttons",
   prefix: true,
   category: "INFO",
   usages: "offer",
@@ -37,28 +37,42 @@ module.exports.run = async ({ api, event, args }) => {
 ✔️ Simple + Special + Premium Bot একসাথে = ৳2000
 ✔️ প্যাকেজ + Modified Bot সহ = ৳3000
 
-📱 **যোগাযোগের জন্য:**
-- Messenger: https://m.me/s.a.k.i.b.tsu.863539
-- WhatsApp: https://wa.me/8801920826878
-
 🔥 সীমিত সময়ের অফার – এখনই অর্ডার করুন আর পেয়ে যান আপনার নিজের স্মার্ট Messenger Bot! ✅
-`.trim();
+`;
 
-// আপনার দেওয়া PNG লিঙ্ক
-const imageURL = "https://i.postimg.cc/rptS5cVn/20250902-001924.png"; 
-const imagePath = __dirname + "/cache/offer.png";
+  const imageURL = "https://i.postimg.cc/rptS5cVn/20250902-001924.png"; 
+  const imagePath = __dirname + "/cache/offer.png";
 
-request(encodeURI(imageURL))
-  .pipe(fs.createWriteStream(imagePath))
-  .on("close", () => {
-    api.sendMessage(
-      {
-        body: offerText,
-        attachment: fs.createReadStream(imagePath)
-      },
-      event.threadID,
-      () => fs.unlinkSync(imagePath),
-      event.messageID
-    );
-  });
+  request(encodeURI(imageURL))
+    .pipe(fs.createWriteStream(imagePath))
+    .on("close", () => {
+      api.sendMessage(
+        {
+          body: offerText,
+          attachment: fs.createReadStream(imagePath),
+          template: {
+            type: "button",
+            payload: {
+              template_type: "button",
+              text: "📲 যোগাযোগ করতে নিচের বাটনে ক্লিক করুন!",
+              buttons: [
+                {
+                  type: "web_url",
+                  url: "https://m.me/s.a.k.i.b.tsu.863539",
+                  title: "💬 Messenger"
+                },
+                {
+                  type: "web_url",
+                  url: "https://wa.me/8801920826878",
+                  title: "📞 WhatsApp"
+                }
+              ]
+            }
+          }
+        },
+        event.threadID,
+        () => fs.unlinkSync(imagePath),
+        event.messageID
+      );
+    });
 };
