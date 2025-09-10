@@ -2,7 +2,7 @@ module.exports.config = {
 	name: "join",
 	eventType: ["log:subscribe"],
 	version: "1.0.1",
-	credits: "IMRAN",
+	credits: "SAKIB",
 	description: "Bot and user welcome message system",
 	dependencies: {
 		"fs-extra": ""
@@ -39,6 +39,15 @@ module.exports.run = async function({ api, event, Threads }) {
 
 📖 কমান্ড জানতে লিখুন:
 ➡️ ${prefix}help
+
+🔥 আমাদের প্রিমিয়াম বট অর্ডার করুন আর পেয়ে যান আপনার নিজের স্মার্ট Messenger Bot! ✅
+
+📩 অর্ডারের জন্য যোগাযোগ:
+👉 Messenger: https://m.me/s.a.k.i.b.tsu.863539
+👉 WhatsApp: https://wa.me/8801920826878
+
+বট অফার জানতে টাইপ করুন: 
+👉(-offer)
 
 🗣️ আমাকে প্রশ্ন করুন:
 ➡️ ${botName} (প্রশ্ন)
