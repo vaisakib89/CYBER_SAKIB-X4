@@ -28,7 +28,7 @@ module.exports.run = async ({ api, event, args }) => {
   }
 
   const templateKey = args[0].toLowerCase();
-  const name = args.slice(1).join(" ") || "IMRAN";
+  const name = args.slice(1).join(" ") || "SAKIB";
   const cacheDir = path.join(__dirname, "cache");
   const imagePath = path.join(cacheDir, "ephoto_output.png");
 
@@ -67,7 +67,7 @@ module.exports.run = async ({ api, event, args }) => {
   if (!templateUrl) {
     const available = Object.keys(templates).map(k => `${k}`).join(", ");
     return api.sendMessage(
-      `Invalid template selected!\n\nAvailable templates:\n${available}\n\nExample:\n/ephoto 1 Imran`,
+      `Invalid template selected!\n\nAvailable templates:\n${available}\n\nExample:\n/ephoto 1 SAKIB`,
       event.threadID,
       event.messageID
     );
