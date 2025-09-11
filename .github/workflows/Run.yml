@@ -1,10 +1,12 @@
-name: CYBER-SAKIB 
+name: CYBER-SAKIB
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  schedule:
+    - cron: "0 */5 * * *"   # প্রতি ৫ ঘন্টা পর পর auto run হবে
 
 jobs:
   build:
@@ -22,5 +24,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: CYBER-SAKIB 
+      - name: Run Bot
         run: npm start
