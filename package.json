@@ -1,12 +1,12 @@
 {
-  "name": "IMRAN",
+  "name": "SAKIB",
   "version": "1.0.5",
   "description": "simple facebook messenger bot",
   "main": "main/catalogs/IMRANA.js",
   "scripts": {
     "start": "node main/catalogs/IMRANA.js"
   },
-  "author": "IMRAN",
+  "author": "SAKIB",
   "license": "ISC",
   "dependencies": {
     "abir-photo360-apis": "^1.0.2",
@@ -28,6 +28,7 @@
     "googlethis": "^1.7.1",
     "gradient-string": "^2.0.0",
     "https-proxy-agent": "^7.0.6",
+    "image-downloader": "^4.3.0",
     "jimp": "^0.22.8",
     "lyrics-finder": "^21.7.0",
     "moment": "^2.29.1",
