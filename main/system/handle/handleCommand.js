@@ -134,19 +134,6 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
       }
     }
 
-    // ==== BOT ON/OFF COMMANDS HANDLE ====
-    if (commandName === `${PREFIX}boton` || commandName === `${PREFIX}botoff`) {
-      // পারমিশন চেক (শুধুমাত্র ADMINBOT এবং OWNER ইউজ করতে পারবে)
-      if (commandName === `${PREFIX}boton`) {
-        await writeBotStatus("on");
-        return api.sendMessage("Bot is now ON ✅", threadID, messageID);
-      }
-      else if (commandName === `${PREFIX}botoff`) {
-        await writeBotStatus("off");
-        return api.sendMessage("Bot is now OFF ❌", threadID, messageID);
-      }
-    }
-
     // ---- approval request handling ----
     if (typeof body === "string" && body.startsWith(`${PREFIX}request`) && approval) {
       if (APPROVED.includes(threadID)) {
@@ -224,7 +211,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
     }
 
     // command similarity check
-    if (commandName.startsWith(PREFIX)) {
+    if (commandName && commandName.startsWith(PREFIX)) {
       if (!command) {
         const allCommandName = Array.from(commands.keys());
         const checker = stringSimilarity.findBestMatch(commandName, allCommandName);
