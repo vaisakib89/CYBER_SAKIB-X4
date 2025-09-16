@@ -5,7 +5,7 @@ module.exports.config = {
   name: "botoff",
   version: "1.0.0",
   permission: 2, // 2 = Admin, Operator, or Owner
-  credits: "YourName",
+  credits: "SAKIB",
   description: "Turn the bot OFF",
   prefix: true,
   category: "system",
