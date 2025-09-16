@@ -125,11 +125,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
     // --- Bot OFF হলে শুধু -boton এবং -botoff কমান্ড কাজ করবে ---
     if (!botIsOn) {
       if (commandName !== `${PREFIX}boton` && commandName !== `${PREFIX}botoff`) {
-        // বট অফ তাই অন্য কমান্ড ব্লক করো
-        // Mention reply এখানে চেক করো, কারণ এটা command নয়
-        if (event.mentions) {
-          await handleMentionReply({ event, api });
-        }
+        // বট অফ তাই অন্য কমান্ড এবং মেনশন রিপ্লাই ব্লক করো
         return;
       }
     }
@@ -351,7 +347,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
     else getText2 = () => { };
 
     // Mention reply চেক (command না হলে বা সবসময় চালানো যায় যদি mentions থাকে)
-    if (event.mentions) {
+    if (event.mentions && botIsOn) { // botIsOn চেক যোগ করা হলো
       await handleMentionReply({ event, api });
       // যদি mention reply পাঠানো হয়েছে, তাহলে command execute না করো (যদি command না হয়)
       if (!command) {
