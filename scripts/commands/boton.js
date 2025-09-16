@@ -1,17 +1,56 @@
 const fs = require("fs");
+const path = require("path");
 
 module.exports.config = {
   name: "boton",
   version: "1.0.0",
-  permission: 1,
-  credits: "sakib vai",
+  permission: 2, // 2 = Admin, Operator, or Owner
+  credits: "SAKIB",
   description: "Turn the bot ON",
+  prefix: true,
   category: "system",
-  usages: "",
   cooldowns: 5
 };
 
-module.exports.run = async function ({ api, event }) {
-  fs.writeFileSync(__dirname + "/../../data/botStatus.json", JSON.stringify({ status: true }, null, 2));
-  return api.sendMessage("✅ বট এখন চালু হয়ে গেছে!", event.threadID);
+module.exports.run = async function({ api, event }) {
+  const { threadID, messageID, senderID } = event;
+  const { ADMINBOT, OWNER, OPERATOR } = global.config;
+  const logger = require("../../catalogs/IMRANC.js");
+
+  // botStatus.json এর পাথ
+  const botStatusPath = path.resolve(__dirname, "../../data/botStatus.json");
+
+  // ৩ ধাপ delay helper ফাংশন
+  function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // bot status লেখার ফাংশন
+  async function writeBotStatus(status) {
+    try {
+      await delay(300); // ৩ ধাপ delay
+      fs.writeFileSync(botStatusPath, JSON.stringify({ status: status }, null, 2));
+    } catch (e) {
+      logger.err("Failed to write bot status: " + e);
+      return api.sendMessage("❌ Failed to update bot status due to an error.", threadID, messageID);
+    }
+  }
+
+  // পারমিশন চেক
+  if (!ADMINBOT.includes(senderID) && !OWNER.includes(senderID) && !OPERATOR.includes(senderID)) {
+    logger.err(`Unauthorized attempt to use ${this.config.name} by user ${senderID} in thread ${threadID}`);
+    return api.sendMessage(
+      "❌ You don't have permission to use this command. Only Admins, Owners, or Operators can use it.",
+      threadID,
+      async (err, info) => {
+        await new Promise(resolve => setTimeout(resolve, 5 * 1000));
+        return api.unsendMessage(info.messageID);
+      },
+      messageID
+    );
+  }
+
+  // বট অন করা
+  await writeBotStatus("on");
+  return api.sendMessage("Bot is now ON ✅", threadID, messageID);
 };
