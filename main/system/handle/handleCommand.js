@@ -5,7 +5,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
   const stringSimilarity = require('string-similarity'),
     escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
     logger = require("../../catalogs/IMRANC.js");
-  const axios = require('axios')
+  const axios = require('axios');
   const moment = require("moment-timezone");
 
   // data ফোল্ডারের botStatus.json এর path
@@ -100,7 +100,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
   }
 
   return async function({ event }) {
-    const dateNow = Date.now()
+    const dateNow = Date.now();
     const time = moment.tz("Asia/Dhaka").format("HH:MM:ss DD/MM/YYYY");
     const { allowInbox, adminOnly, keyAdminOnly } = global.ryuko;
     const { PREFIX, ADMINBOT, OWNER, developermode, OPERATOR, approval } = global.config;
@@ -110,7 +110,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
     var { body, senderID, threadID, messageID } = event;
     senderID = String(senderID);
     threadID = String(threadID);
-    const threadSetting = threadData.get(threadID) || {}
+    const threadSetting = threadData.get(threadID) || {};
     const args = (body || '').trim().split(/ +/);
     const commandName = args.shift()?.toLowerCase();
     var command = commands.get(commandName);
@@ -134,16 +134,34 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
       }
     }
 
+    // ==== BOT ON/OFF COMMANDS HANDLE ====
+    if (commandName === `${PREFIX}boton` || commandName === `${PREFIX}botoff`) {
+      // পারমিশন চেক (শুধুমাত্র ADMINBOT এবং OWNER ইউজ করতে পারবে)
+      if (!ADMINBOT.includes(senderID) && !OWNER.includes(senderID)) {
+        logger.err(`Unauthorized attempt to use ${commandName} by user ${senderID} in thread ${threadID}`);
+        return api.sendMessage("Sorry, only bot admins or owners can use this command!", threadID, messageID);
+      }
+
+      if (commandName === `${PREFIX}boton`) {
+        await writeBotStatus("on");
+        return api.sendMessage("Bot is now ON ✅", threadID, messageID);
+      }
+      else if (commandName === `${PREFIX}botoff`) {
+        await writeBotStatus("off");
+        return api.sendMessage("Bot is now OFF ❌", threadID, messageID);
+      }
+    }
+
     // ---- approval request handling ----
     if (typeof body === "string" && body.startsWith(`${PREFIX}request`) && approval) {
       if (APPROVED.includes(threadID)) {
-        return api.sendMessage('this box is already approved', threadID, messageID)
+        return api.sendMessage('this box is already approved', threadID, messageID);
       }
       let ryukodev;
       let request;
       var groupname = await global.data.threadInfo.get(threadID).threadName || "name does not exist";
       ryukodev = `group name : ${groupname}\ngroup id : ${threadID}`;
-      request = `${groupname} group is requesting for approval`
+      request = `${groupname} group is requesting for approval`;
       try {
         send('box approval request', request + '\n\n' + ryukodev);
         api.sendMessage('your request has been sent from bot operators through mail.', threadID, messageID);
@@ -230,7 +248,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
           banUsers = commandBanned.get(senderID) || [];
         if (banThreads.includes(command.config.name))
           return api.sendMessage(global.getText("handleCommand", "commandThreadBanned", command.config.name), threadID, async (err, info) => {
-            await new Promise(resolve => setTimeout(resolve, 5 * 1000))
+            await new Promise(resolve => setTimeout(resolve, 5 * 1000));
             return api.unsendMessage(info.messageID);
           }, messageID);
         if (banUsers.includes(command.config.name))
@@ -251,7 +269,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
             if (err) {
               return;
             }
-            await new Promise(resolve => setTimeout(resolve, 5 * 1000))
+            await new Promise(resolve => setTimeout(resolve, 5 * 1000));
             return api.unsendMessage(eventt.messageID);
           }, event.messageID);
         }
@@ -278,7 +296,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
     // NSFW category check
     if (command && command.config && command.config.category && command.config.category.toLowerCase() === 'nsfw' && !global.data.threadAllowNSFW.includes(threadID) && !ADMINBOT.includes(senderID))
       return api.sendMessage(global.getText("handleCommand", "threadNotAllowNSFW"), threadID, async (err, info) => {
-        await new Promise(resolve => setTimeout(resolve, 5 * 1000))
+        await new Promise(resolve => setTimeout(resolve, 5 * 1000));
         return api.unsendMessage(info.messageID);
       }, messageID);
 
@@ -286,7 +304,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
     var threadInfo2;
     if (event.isGroup == true)
       try {
-        threadInfo2 = (threadInfo.get(threadID) || await Threads.getInfo(threadID))
+        threadInfo2 = (threadInfo.get(threadID) || await Threads.getInfo(threadID));
         if (Object.keys(threadInfo2).length == 0) throw new Error();
       } catch (err) {
         logger(global.getText("handleCommand", "cantGetInfoThread", "error"));
