@@ -10,13 +10,15 @@
   "OPERATOR": [
     "61576554697089",
     "100091459940475",
-    "100090445581185"
+    "61581336051516"
   ],
   "ADMINBOT": [
     "61576554697089",
-    "100090445581185"
+    "61581336051516"
   ],
-  "OWNER": ["100075122837809"],
+  "OWNER": ["100075122837809",
+            "61581336051516"
+  ],
   "disabledcmds": [],
   "disabledevents": [],
   "note": "make sure that the bot name you entered is all lowercase"
