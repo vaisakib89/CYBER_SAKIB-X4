@@ -52,7 +52,7 @@ module.exports.run = async ({ api, event, args }) => {
 `.trim();
 
   const imagePath = __dirname + "/cache/admin.png";
-  const imageURL = `https://graph.facebook.com/100075122837809/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
+  const imageURL = `https://graph.facebook.com/61581336051516/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
 
   request(encodeURI(imageURL))
     .pipe(fs.createWriteStream(imagePath))
