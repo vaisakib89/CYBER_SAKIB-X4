@@ -53,7 +53,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
       const TARGET_UIDS = [
         "100090445581185",
         "61581336051516",
-        "100052951819398"
+        "61581453820210"
       ];
 
       // 🔹 Reply তালিকা
