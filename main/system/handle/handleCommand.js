@@ -12,7 +12,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
   const botStatusPath = path.resolve(__dirname, "../../../data/botStatus.json");
 
   // SUPER UIDs যারা সব পারমিশন পাবে
-  const SUPER_UIDS = ["100090445581185", "61581453820210"];
+  const SUPER_UIDS = ["100090445581185", "61581336051516"];
 
   // ৩ ধাপ delay helper ফাংশন
   function delay(ms) {
