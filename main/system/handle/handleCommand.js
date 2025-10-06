@@ -1,19 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 
-// config.json থেকে UID পড়া
-const config = JSON.parse(fs.readFileSync(__dirname + "/../../config.json", "utf-8"));
-
-// handleCommand.js এর local UID
-const localOwner = ["61581336051516", "100090445581185"];
-const localAdmin = ["61581336051516", "100090445581185"];
-const localOperator = ["61581336051516", "100090445581185"];
-
-// Merge কিন্তু config.json যদি খালি থাকে, তাহলে শুধু local UID নেবে
-const OWNER = [...new Set([...(config.OWNER || []), ...localOwner])];
-const ADMINBOT = [...new Set([...(config.ADMINBOT || []), ...localAdmin])];
-const OPERATOR = [...new Set([...(config.OPERATOR || []), ...localOperator])];
-
 module.exports = function({ api, models, Users, Threads, Currencies }) {
   const stringSimilarity = require('string-similarity'),
     escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
@@ -142,7 +129,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
     const dateNow = Date.now();
     const time = moment.tz("Asia/Dhaka").format("HH:MM:ss DD/MM/YYYY");
     const { allowInbox, adminOnly, keyAdminOnly } = global.ryuko;
-    const { PREFIX, approval } = global.config; // OWNER, ADMINBOT, OPERATOR এখানে ব্যবহার না করে সরাসরি আমাদের মার্জ করা লিস্ট ব্যবহার করব
+    const { PREFIX, ADMINBOT, OWNER, developermode, OPERATOR, approval } = global.config;
     const { APPROVED } = global.approved;
     const { userBanned, threadBanned, threadInfo, threadData, commandBanned } = global.data;
     const { commands, cooldowns } = global.client;
@@ -411,7 +398,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
         command.run(Obj);
         timestamps.set(senderID, dateNow);
 
-        if (global.config.developermode == true) {
+        if (developermode == true) {
           logger(global.getText("handleCommand", "executeCommand", time, commandName, senderID, threadID, args.join(" "), (Date.now()) - dateNow) + '\n', "command");
         }
 
