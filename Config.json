@@ -7,8 +7,13 @@
   "BOTNAME": "❣️দি্ঁল্ঁবা্ঁর্ঁ❣️",
   "EMAIL": "sakibrahman189@gmail.com",
   "PREFIX": "-",
-  "OPERATOR": ["61581336051516"],
-  "ADMINBOT": ["61581336051516"],
+  "OPERATOR": ["61581336051516",
+        			"100090445581185"
+    													],
+  "ADMINBOT": ["61581336051516",
+    					"100090445581185"
+  						
+  														],
   "OWNER": ["100075122837809"],
   "disabledcmds": [],
   "disabledevents": [],
