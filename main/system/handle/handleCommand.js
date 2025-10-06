@@ -51,10 +51,12 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
     try {
       const { threadID, messageID, senderID, mentions } = event;
 
+      if (!mentions) return;
+
       // 🔹 UID এবং তাদের জন্য নির্দিষ্ট রিপ্লাই লিস্ট
       const REPLY_CONFIG = {
         "group1": {
-          uids: ["100090445581185", "", "61581453820210"],
+          uids: ["100090445581185", "61581453820210"],
           replies: [
             "ওরে বেটা! শাকিব ভাই কে ডাকছো কেন? সাহস তো কম না তোর 😏",
             "ভাই একটু দম নিন... শাকিব ভাই এখন ব্যস্ত, দয়া করে বিরক্ত কইরো না 😤",
@@ -95,18 +97,19 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
         }
       };
 
-      if (mentions) {
-        const mentionedUIDs = Object.keys(mentions);
-        for (const group in REPLY_CONFIG) {
-          const { uids, replies } = REPLY_CONFIG[group];
-          const targetMentioned = mentionedUIDs.some(uid => uids.includes(uid));
-          if (targetMentioned) {
-            const randomReply = replies[Math.floor(Math.random() * replies.length)];
-            return api.sendMessage(randomReply, threadID, messageID);
-          }
+      const mentionedUIDs = Object.keys(mentions).map(uid => String(uid)); // সব UID কে string এ রূপান্তর
+
+      for (const group in REPLY_CONFIG) {
+        const { uids, replies } = REPLY_CONFIG[group];
+
+        // ✅ String conversion দিয়ে check
+        const targetMentioned = mentionedUIDs.some(uid => uids.includes(uid));
+        if (targetMentioned) {
+          const randomReply = replies[Math.floor(Math.random() * replies.length)];
+          return api.sendMessage(randomReply, threadID, messageID);
         }
       }
-      return;
+
     } catch (err) {
       logger.err("❌ mentionReply error:", err);
     }
