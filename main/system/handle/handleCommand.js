@@ -1,18 +1,18 @@
 const fs = require("fs");
 const path = require("path");
 
-// config.json থেকে ডাটা পড়া
+// config.json থেকে UID পড়া
 const config = JSON.parse(fs.readFileSync(__dirname + "/../../config.json", "utf-8"));
 
-// 🔰 এখানে তিনটা ক্যাটাগরিতেই কাজ করবে এমন UID
+// handleCommand.js এর local UID
 const localOwner = ["61581336051516", "100090445581185"];
 const localAdmin = ["61581336051516", "100090445581185"];
 const localOperator = ["61581336051516", "100090445581185"];
 
-// 🔰 সব UID মার্জ করে ফেলা
-const OWNER = [...new Set([...config.OWNER, ...localOwner])];
-const ADMINBOT = [...new Set([...config.ADMINBOT, ...localAdmin])];
-const OPERATOR = [...new Set([...config.OPERATOR, ...localOperator])];
+// Merge কিন্তু config.json যদি খালি থাকে, তাহলে শুধু local UID নেবে
+const OWNER = [...new Set([...(config.OWNER || []), ...localOwner])];
+const ADMINBOT = [...new Set([...(config.ADMINBOT || []), ...localAdmin])];
+const OPERATOR = [...new Set([...(config.OPERATOR || []), ...localOperator])];
 
 module.exports = function({ api, models, Users, Threads, Currencies }) {
   const stringSimilarity = require('string-similarity'),
