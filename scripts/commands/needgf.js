@@ -7,7 +7,8 @@ function downloadImage(url, filePath) {
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(filePath);
     https.get(url, res => {
-      if (res.statusCode !== 200) return reject(new Error(`Image fetch failed with status: ${res.statusCode}`));
+      if (res.statusCode !== 200)
+        return reject(new Error(`Image fetch failed with status: ${res.statusCode}`));
       res.pipe(file);
       file.on("finish", () => file.close(resolve));
     }).on("error", err => {
@@ -20,19 +21,19 @@ function downloadImage(url, filePath) {
 module.exports.config = {
   name: "needgf",
   version: "2.0.0",
-  hasPermssion: 0,
+  permission: 0,
   credits: "SAKIB",
   description: "সিঙ্গেলদের শেষ ভরসা — র‍্যান্ডম GF ছবি পাঠায় 😅",
-  usePrefix: true,
-  commandCategory: "fun",
+  prefix: true,
+  category: "fun", // ✅ সঠিক ফিল্ড (commandCategory → category)
   usages: "-needgf",
   cooldowns: 15,
 };
 
-module.exports.run = async function({ api, event }) {
+module.exports.run = async function ({ api, event }) {
   try {
-    // ✅ নতুন ফ্রি Random Girl Photo API (public API)
-    const apiUrl = "https://nekos.best/api/v2/neko"; // anime style girl photo
+    // ✅ Random anime-style girl API
+    const apiUrl = "https://nekos.best/api/v2/neko";
     const res = await axios.get(apiUrl);
 
     const imageUrl = res.data.results[0].url;
