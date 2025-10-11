@@ -3,6 +3,11 @@ const fs = require("fs");
 const path = require("path");
 const https = require("https");
 
+const cacheFile = path.join(__dirname, "cache", "cache.json");
+
+// Ensure cache.json exists
+if (!fs.existsSync(cacheFile)) fs.writeFileSync(cacheFile, JSON.stringify({}));
+
 function downloadImage(url, filePath) {
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(filePath);
@@ -20,25 +25,37 @@ function downloadImage(url, filePath) {
 
 module.exports.config = {
   name: "needgf",
-  version: "2.0.0",
+  version: "2.1.0",
   permission: 0,
   credits: "SAKIB",
-  description: "সিঙ্গেলদের শেষ ভরসা — র‍্যান্ডম GF ছবি পাঠায় 😅",
+  description: "সিঙ্গেলদের শেষ ভরসা — র‍্যান্ডম GF ছবি পাঠায় 😅 (cache system)",
   prefix: true,
-  category: "fun", // ✅ সঠিক ফিল্ড (commandCategory → category)
+  category: "fun",
   usages: "-needgf",
   cooldowns: 15,
 };
 
 module.exports.run = async function ({ api, event }) {
   try {
-    // ✅ Random anime-style girl API
-    const apiUrl = "https://nekos.best/api/v2/neko";
-    const res = await axios.get(apiUrl);
+    const userID = event.senderID;
+    let cache = JSON.parse(fs.readFileSync(cacheFile));
 
-    const imageUrl = res.data.results[0].url;
-    const imgPath = path.join(__dirname, "cache", `${event.senderID}_gf.jpg`);
+    let imageUrl;
+    // যদি cache এ থাকে, reuse করো
+    if (cache[userID]) {
+      imageUrl = cache[userID];
+    } else {
+      // নতুন image fetch
+      const apiUrl = "https://nekos.best/api/v2/neko";
+      const res = await axios.get(apiUrl);
+      imageUrl = res.data.results[0].url;
 
+      // cache update
+      cache[userID] = imageUrl;
+      fs.writeFileSync(cacheFile, JSON.stringify(cache, null, 2));
+    }
+
+    const imgPath = path.join(__dirname, "cache", `${userID}_gf.jpg`);
     await downloadImage(imageUrl, imgPath);
 
     api.sendMessage({
