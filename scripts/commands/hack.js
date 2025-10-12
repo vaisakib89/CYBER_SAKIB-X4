@@ -1,7 +1,7 @@
-// scripts/command/hack.js
+// scripts/commands/hack.js
 module.exports.config = {
   name: "hack",
-  version: "1.0.1",
+  version: "1.0.3",
   permission: 0,
   credits: "Nayan",
   description: "Create custom image with avatar and name",
@@ -11,16 +11,29 @@ module.exports.config = {
   cooldowns: 5,
   dependencies: {
     "axios": "",
-    "fs-extra": ""
+    "fs-extra": "",
+    "canvas": ""
   }
 };
+
+// load once — লগ দেখাবে লোড হয়েছে কিনা
+console.log("[COMMAND] hack.js loaded");
+
+const axios = require("axios");
+const fs = require("fs-extra");
+const path = require("path");
+let canvasModule;
+try {
+  canvasModule = require("canvas");
+} catch (e) {
+  console.error("[COMMAND] canvas module load failed:", e.message);
+  // আমরা চালিয়ে দেব কিন্তু run হলে obvious error দেখাবে
+}
 
 module.exports.wrapText = (ctx, text, maxWidth) => {
   return new Promise(resolve => {
     if (!text) return resolve([]);
-    // দ্রুত চেক - পুরো স্ট্রিং ছোট হলে
     if (ctx.measureText(text).width <= maxWidth) return resolve([text]);
-    // যদি একেকটি 'W' কেও ছাড়িয়ে যায় (অত্যন্ত সংকীর্ণ жағдай)
     if (ctx.measureText('W').width > maxWidth) return resolve(null);
 
     const words = text.split(' ');
@@ -28,10 +41,8 @@ module.exports.wrapText = (ctx, text, maxWidth) => {
     let line = '';
 
     while (words.length > 0) {
-      // যদি প্রত্যেক শব্দ খুব বড় হয় তাহলে শব্দের মধ্যেই ভাঙতে হবে
       while (ctx.measureText(words[0]).width > maxWidth) {
         const word = words[0];
-        // last char move to next word
         words[0] = word.slice(0, -1);
         if (words[1]) words[1] = word.slice(-1) + words[1];
         else words.splice(1, 0, word.slice(-1));
@@ -51,46 +62,61 @@ module.exports.wrapText = (ctx, text, maxWidth) => {
 };
 
 module.exports.run = async function ({ Users, api, event }) {
-  const { loadImage, createCanvas } = require("canvas");
-  const fs = global.nodemodule["fs-extra"];
-  const axios = global.nodemodule["axios"];
-  const path = require("path");
-
-  // cache path inside this command folder
-  const dir = __dirname;
-  const pathImg = path.join(dir, "cache_background.png");
-  const pathAvt = path.join(dir, "cache_avt.png");
-
   try {
-    // get target id: mentioned user first else sender
+    console.log("[COMMAND] hack.run invoked, event:", event.threadID, "from:", event.senderID);
+
+    if (!canvasModule) {
+      return api.sendMessage("Command temp unavailable: canvas module missing. Admin check console.", event.threadID);
+    }
+    const { loadImage, createCanvas } = canvasModule;
+
+    const dir = __dirname;
+    const pathImg = path.join(dir, "cache_background.png");
+    const pathAvt = path.join(dir, "cache_avt.png");
+
+    // get target id
     const mentions = event.mentions || {};
     const mentionedIds = Object.keys(mentions);
     const id = (mentionedIds.length > 0) ? mentionedIds[0] : event.senderID;
 
-    const name = await Users.getNameUser(id);
+    console.log("[COMMAND] target id:", id);
 
-    // background list - তোমার public image url এখানে দিতে হবে
+    // safe Users name fetch
+    let name = "Unknown";
+    try {
+      if (Users && typeof Users.getNameUser === "function") {
+        name = await Users.getNameUser(id);
+      } else {
+        console.warn("[COMMAND] Users.getNameUser not available");
+      }
+    } catch (e) {
+      console.warn("[COMMAND] getNameUser error:", e.message);
+    }
+
+    // backgrounds - use direct public image links (test one)
     const backgrounds = [
-      // উদাহরণ: public image URL
-      "https://drive.google.com/uc?id=1RwJnJTzUmwOmP3N_mZzxtp63wbvt9bLZ"
+      "https://i.imgur.com/4AiXzf8.jpeg" // replace with your bg
     ];
     const rd = backgrounds[Math.floor(Math.random() * backgrounds.length)];
 
-    // === Important: এই token টা পরিবর্তন করে তোমার টোকেন বা কোনো কাজের টোকেন বসাও ===
-    // যদি তোমার বটের graph token না থাকে, ভবিষ্যতে profile pic ডাউনলোড করার অন্য পথ ব্যবহার করতে পারো
-    const graphToken = "6628568379%7Cc1e620fa708a1d5696fb991c1bde5662"; // CHANGE THIS
+    // optional FB token (nil allowed)
+    const graphToken = ""; // put your token if needed
 
-    // download profile picture
-    const avtRes = await axios.get(
-      `https://graph.facebook.com/${id}/picture?width=720&height=720&access_token=${graphToken}`,
-      { responseType: "arraybuffer" }
-    );
+    // download avatar (try without token first)
+    let avtUrl = `https://graph.facebook.com/${id}/picture?width=720&height=720`;
+    if (graphToken) avtUrl += `&access_token=${graphToken}`;
+
+    console.log("[COMMAND] downloading avatar from:", avtUrl);
+    const avtRes = await axios.get(avtUrl, { responseType: "arraybuffer" });
     fs.ensureDirSync(path.dirname(pathAvt));
     fs.writeFileSync(pathAvt, Buffer.from(avtRes.data));
+    console.log("[COMMAND] avatar saved:", pathAvt);
 
     // download background
+    console.log("[COMMAND] downloading background from:", rd);
     const bgRes = await axios.get(rd, { responseType: "arraybuffer" });
     fs.writeFileSync(pathImg, Buffer.from(bgRes.data));
+    console.log("[COMMAND] background saved:", pathImg);
 
     // load images
     const baseImage = await loadImage(pathImg);
@@ -103,16 +129,14 @@ module.exports.run = async function ({ Users, api, event }) {
     // draw background
     ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
 
-    // text style - প্রয়োজন মত পরিবর্তন করবে
-    ctx.font = "400 23px Arial";
+    // text style
+    ctx.font = "400 23px Sans";
     ctx.fillStyle = "#1878F3";
     ctx.textAlign = "start";
 
-    // wrap text with maximum width in pixels (adjust per your background)
-    const maxTextWidth = 1160;
+    const maxTextWidth = Math.min(1160, canvas.width - 250);
     const lines = await this.wrapText(ctx, name, maxTextWidth) || [name];
 
-    // draw each line (adjust starting x,y and lineHeight)
     const startX = 200;
     const startY = 497;
     const lineHeight = 30;
@@ -120,21 +144,19 @@ module.exports.run = async function ({ Users, api, event }) {
       ctx.fillText(ln, startX, startY + i * lineHeight);
     });
 
-    // draw avatar (adjust coords and size as needed)
-    ctx.beginPath();
+    // draw avatar
     ctx.drawImage(baseAvt, 83, 437, 100, 101);
-    ctx.closePath();
 
     // write final image
-    const finalBuffer = canvas.toBuffer();
+    const finalBuffer = canvas.toBuffer("image/png");
     fs.writeFileSync(pathImg, finalBuffer);
 
-    // send message with attachment
+    console.log("[COMMAND] final image written, sending...");
+
     return api.sendMessage(
       { body: ``, attachment: fs.createReadStream(pathImg) },
       event.threadID,
       (err) => {
-        // cleanup
         try { fs.unlinkSync(pathImg); } catch (e) {}
         try { fs.unlinkSync(pathAvt); } catch (e) {}
         if (err) console.error(err);
@@ -144,7 +166,6 @@ module.exports.run = async function ({ Users, api, event }) {
 
   } catch (error) {
     console.error("hack command error:", error);
-    // send error msg so user knows (optional)
     return api.sendMessage(`Error: ${error.message}`, event.threadID, event.messageID);
   }
 };
