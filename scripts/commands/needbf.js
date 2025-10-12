@@ -7,10 +7,10 @@ if (!fs.existsSync(cacheFile)) fs.writeFileSync(cacheFile, JSON.stringify({}));
 
 module.exports.config = {
   name: "needbf",
-  version: "2.3.0",
+  version: "3.0.0",
   permission: 0,
   credits: "SAKIB",
-  description: "সিঙ্গেল মেয়েদের শেষ ভরসা — র‍্যান্ডম BF (কার্টুন) ছবি পাঠায় 😎",
+  description: "সিঙ্গেলদের জন্য র‍্যান্ডম কার্টুন/Anime BF 😎💞",
   prefix: true,
   category: "fun",
   usages: "-needbf",
@@ -22,12 +22,10 @@ module.exports.run = async function ({ api, event }) {
     const userID = event.senderID;
     let cache = JSON.parse(fs.readFileSync(cacheFile));
 
-    // ✅ Anime-style র‍্যান্ডম বয় পিক
-    const apiUrl = "https://nekos.best/api/v2/male";
-    const res = await axios.get(apiUrl);
-    const imageUrl = res.data.results[0].url;
+    // ✅ Random Anime Boy picture (Unsplash)
+    const imageUrl = "https://source.unsplash.com/600x800/?anime,boy";
 
-    // cache update
+    // cache আপডেট
     cache[userID] = imageUrl;
     fs.writeFileSync(cacheFile, JSON.stringify(cache, null, 2));
 
@@ -40,7 +38,7 @@ module.exports.run = async function ({ api, event }) {
 
     // পাঠানো
     api.sendMessage({
-      body: "তোমার কার্টুন BF হাজির 😎💞",
+      body: "তোমার নতুন কার্টুন BF হাজির 😎💞",
       attachment: fs.createReadStream(imgPath)
     }, event.threadID, () => fs.unlinkSync(imgPath), event.messageID);
 
