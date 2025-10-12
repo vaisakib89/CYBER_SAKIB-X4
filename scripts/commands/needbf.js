@@ -2,15 +2,15 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 
-const cacheDir = path.join(__dirname, "cache");
-if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
+const cacheFile = path.join(__dirname, "cache", "cache.json");
+if (!fs.existsSync(cacheFile)) fs.writeFileSync(cacheFile, JSON.stringify({}));
 
 module.exports.config = {
   name: "needbf",
-  version: "3.0.0",
+  version: "2.3.0",
   permission: 0,
   credits: "SAKIB",
-  description: "রিয়েল বয়ফ্রেন্ড টাইপ র‍্যান্ডম পিক পাঠায় 😎 (Unsplash version)",
+  description: "সিঙ্গেল মেয়েদের শেষ ভরসা — র‍্যান্ডম BF (কার্টুন) ছবি পাঠায় 😎",
   prefix: true,
   category: "fun",
   usages: "-needbf",
@@ -20,23 +20,32 @@ module.exports.config = {
 module.exports.run = async function ({ api, event }) {
   try {
     const userID = event.senderID;
-    const imgPath = path.join(cacheDir, `${userID}_real_bf.jpg`);
+    let cache = JSON.parse(fs.readFileSync(cacheFile));
 
-    // ✅ রিয়েল ছেলেদের র‍্যান্ডম ছবি (Unsplash)
-    const imageUrl = "https://source.unsplash.com/random/600x800/?handsome,boy,man,portrait";
+    // ✅ Anime-style র‍্যান্ডম বয় পিক
+    const apiUrl = "https://nekos.best/api/v2/male";
+    const res = await axios.get(apiUrl);
+    const imageUrl = res.data.results[0].url;
 
-    // Axios দিয়ে সরাসরি ডাউনলোড
-    const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
-    fs.writeFileSync(imgPath, response.data);
+    // cache update
+    cache[userID] = imageUrl;
+    fs.writeFileSync(cacheFile, JSON.stringify(cache, null, 2));
+
+    // ডাউনলোড path
+    const imgPath = path.join(__dirname, "cache", `${userID}_bf.jpg`);
+
+    // ডাউনলোড
+    const imgResponse = await axios.get(imageUrl, { responseType: "arraybuffer" });
+    fs.writeFileSync(imgPath, imgResponse.data);
 
     // পাঠানো
     api.sendMessage({
-      body: "তোমার রিয়েল BF হাজির 😎💘",
+      body: "তোমার কার্টুন BF হাজির 😎💞",
       attachment: fs.createReadStream(imgPath)
     }, event.threadID, () => fs.unlinkSync(imgPath), event.messageID);
 
   } catch (err) {
-    console.error("❌ Error:", err);
+    console.error("❌ Full Error:", err);
     api.sendMessage("দুঃখিত ভাই 😅, এখন একটু সমস্যা হচ্ছে!", event.threadID, event.messageID);
   }
 };
