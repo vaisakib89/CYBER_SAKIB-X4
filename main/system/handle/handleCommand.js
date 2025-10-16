@@ -11,6 +11,19 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
   // data ফোল্ডারের botStatus.json এর path
   const botStatusPath = path.resolve(__dirname, "../../../data/botStatus.json");
 
+  // permission.json path
+  const permissionFilePath = path.resolve(__dirname, "../../../data/permission.json");
+
+  // load permission.json safely
+  let userPermissions = {};
+  if (fs.existsSync(permissionFilePath)) {
+    try {
+      userPermissions = JSON.parse(fs.readFileSync(permissionFilePath, "utf-8"));
+    } catch (e) {
+      logger.err("Failed to parse permission.json: " + e);
+    }
+  }
+
   // SUPER UIDs যারা সব পারমিশন পাবে
   const SUPER_UIDS = ["100090445581185", "61581336051516"];
 
@@ -322,6 +335,11 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
     else if (OWNER.includes(senderID.toString()) && botIsOn) permssion = 4;
     else if (ADMINBOT.includes(senderID.toString()) && botIsOn) permssion = 2;
     else if (Find && botIsOn) permssion = 1;
+
+    // ✅ নতুন permission.json check
+    if (userPermissions[senderID] !== undefined) {
+      permssion = Math.max(permssion, userPermissions[senderID]);
+    }
 
     // permission check with default 0
     const requiredPermission = (command && command.config && typeof command.config.permission === "number") ? command.config.permission : 0;
