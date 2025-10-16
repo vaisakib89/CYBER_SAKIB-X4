@@ -12,10 +12,10 @@ module.exports.config = {
   cooldowns: 5
 };
 
-module.exports.run = async function({ api, event, args }) {
+module.exports.run = async function({ api, event }) {
   const permissionFilePath = path.resolve(__dirname, "../../../data/permission.json");
 
-  // permission.json safely load
+  // load permission.json safely
   let userPermissions = {};
   if (fs.existsSync(permissionFilePath)) {
     try {
@@ -25,11 +25,12 @@ module.exports.run = async function({ api, event, args }) {
     }
   }
 
-  const { senderID, threadID } = event;
-  if (args.length < 2) return api.sendMessage("Usage: -permission1 <uid> or -permission2 <uid>", threadID);
+  const { body, threadID } = event;
+  const parts = body.trim().split(/\s+/); // কমান্ড এবং ইউআইডি আলাদা করা
+  const commandName = parts[0].toLowerCase(); // -permission1
+  const targetUID = parts[1]; // ইউজারের UID
 
-  const commandName = event.body.split(" ")[0].toLowerCase();
-  const targetUID = args[1];
+  if (!targetUID) return api.sendMessage("Usage: -permission1 <uid> or -permission2 <uid>", threadID);
 
   // check valid UID
   if (!/^\d+$/.test(targetUID)) return api.sendMessage("Invalid UID. Only numbers allowed.", threadID);
