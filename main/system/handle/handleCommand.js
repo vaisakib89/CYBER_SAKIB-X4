@@ -326,25 +326,29 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
       }
     }
 
-    // permission calculation
-    var permssion = 0;
+    // =========================
+    // 🔹 Permission Calculation
+    // =========================
     var threadInfoo = (threadInfo.get(threadID) || await Threads.getInfo(threadID));
-    const Find = threadInfoo.adminIDs.find(el => el.id == senderID);
-    if (SUPER_UIDS.includes(senderID) && botIsOn) permssion = 5; // সর্বোচ্চ পারমিশন
-    else if (OPERATOR.includes(senderID.toString()) && botIsOn) permssion = 3;
-    else if (OWNER.includes(senderID.toString()) && botIsOn) permssion = 4;
-    else if (ADMINBOT.includes(senderID.toString()) && botIsOn) permssion = 2;
-    else if (Find && botIsOn) permssion = 1;
+    const Find = threadInfoo.adminIDs?.find(el => el.id == senderID);
+    let permssion = 0;
+
+    // আগের roles অনুযায়ী level
+    if (SUPER_UIDS.includes(senderID)) permssion = 5;
+    else if (OPERATOR.includes(senderID)) permssion = 3;
+    else if (OWNER.includes(senderID)) permssion = 4;
+    else if (ADMINBOT.includes(senderID)) permssion = 2;
+    else if (Find) permssion = 1;
 
     // ✅ নতুন permission.json check
     if (userPermissions[senderID] !== undefined) {
       permssion = Math.max(permssion, userPermissions[senderID]);
     }
 
-    // permission check with default 0
+    // command permission check
     const requiredPermission = (command && command.config && typeof command.config.permission === "number") ? command.config.permission : 0;
-    if (command && command.config && requiredPermission > permssion && botIsOn) {
-      return api.sendMessage(global.getText("handleCommand", "permissionNotEnough", command.config.name), event.threadID, event.messageID);
+    if (command && requiredPermission > permssion && botIsOn) {
+      return api.sendMessage(`⛔ You don’t have permission to use the command "${command.config.name}".`, threadID, messageID);
     }
 
     // cooldowns initialization
