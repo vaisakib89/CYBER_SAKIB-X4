@@ -4,55 +4,49 @@ const path = require("path");
 module.exports.config = {
   name: "permission",
   version: "1.0.0",
-  permission: 1,
-  credits: "Shakib",
-  description: "Set or change user permission level",
+  permission: 3, // শুধুমাত্র OPERATOR বা তার উপরের level ব্যবহার করতে পারবে
+  description: "Assign permission level to a user",
   prefix: true,
   category: "Admin",
-  usages: "[1|2] [userID]",
-  cooldowns: 5,
+  usages: "-permission1 <uid> | -permission2 <uid>",
+  cooldowns: 5
 };
 
-const filePath = path.join(__dirname, "../../data/permission.json");
+module.exports.run = async function({ api, event, args }) {
+  const permissionFilePath = path.resolve(__dirname, "../../../data/permission.json");
 
-module.exports.run = async function ({ api, event, args }) {
-  // permission.json ফাইল না থাকলে নতুন বানাবে
-  if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, JSON.stringify({}, null, 2));
+  // permission.json safely load
+  let userPermissions = {};
+  if (fs.existsSync(permissionFilePath)) {
+    try {
+      userPermissions = JSON.parse(fs.readFileSync(permissionFilePath, "utf-8"));
+    } catch (e) {
+      console.error("Failed to parse permission.json: " + e);
+    }
   }
 
-  const permissionData = JSON.parse(fs.readFileSync(filePath));
+  const { senderID, threadID } = event;
+  if (args.length < 2) return api.sendMessage("Usage: -permission1 <uid> or -permission2 <uid>", threadID);
 
-  // কমান্ডে পারামিটার না দিলে হেল্প দেখাবে
-  if (args.length < 2) {
-    return api.sendMessage(
-      "❌ ব্যবহার:\n\n-permission1 <uid>\n-permission2 <uid>",
-      event.threadID,
-      event.messageID
-    );
+  const commandName = event.body.split(" ")[0].toLowerCase();
+  const targetUID = args[1];
+
+  // check valid UID
+  if (!/^\d+$/.test(targetUID)) return api.sendMessage("Invalid UID. Only numbers allowed.", threadID);
+
+  let level = 0;
+  if (commandName === "-permission1") level = 1;
+  else if (commandName === "-permission2") level = 2;
+  else return api.sendMessage("Invalid command. Use -permission1 or -permission2", threadID);
+
+  // assign permission
+  userPermissions[targetUID] = level;
+
+  try {
+    fs.writeFileSync(permissionFilePath, JSON.stringify(userPermissions, null, 2));
+    return api.sendMessage(`✅ UID ${targetUID} has been granted permission level ${level}`, threadID);
+  } catch (err) {
+    console.error(err);
+    return api.sendMessage("❌ Failed to update permission.json", threadID);
   }
-
-  const command = args[0].toLowerCase(); // permission1 or permission2
-  const userID = args[1];
-  let level;
-
-  if (command === "permission1") {
-    level = 1;
-  } else if (command === "permission2") {
-    level = 2;
-  } else {
-    return api.sendMessage("⚠️ ভুল কমান্ড!", event.threadID, event.messageID);
-  }
-
-  // আইডি যুক্ত বা আপডেট করো
-  permissionData[userID] = level;
-
-  // ফাইলে সেভ করো
-  fs.writeFileSync(filePath, JSON.stringify(permissionData, null, 2));
-
-  return api.sendMessage(
-    `✅ ইউজার ${userID} এখন permission level ${level} পেয়ে গেছে।`,
-    event.threadID,
-    event.messageID
-  );
 };
