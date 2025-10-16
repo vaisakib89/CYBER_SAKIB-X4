@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    - cron: "0 */5 * * *"   # প্রতি ৫ ঘন্টা পর পর auto run হবে
+    - cron: "55 */6 * * *"   # প্রতি ৫ ঘণ্টা ৫৫ মিনিট পর পর auto run হবে (approx)
 
 jobs:
   build:
