@@ -4,7 +4,7 @@ const path = require("path");
 module.exports.config = {
   name: "permission",
   version: "1.0.0",
-  permission: 3, // শুধুমাত্র OPERATOR বা তার উপরের level ব্যবহার করতে পারবে
+  permission: 3,
   description: "Assign permission level to a user",
   prefix: true,
   category: "Admin",
@@ -15,24 +15,27 @@ module.exports.config = {
 module.exports.run = async function({ api, event }) {
   const permissionFilePath = path.resolve(__dirname, "../../../data/permission.json");
 
-  // load permission.json safely
+  // ensure data folder exists
+  const dataDir = path.dirname(permissionFilePath);
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+
+  // load existing permissions safely
   let userPermissions = {};
   if (fs.existsSync(permissionFilePath)) {
     try {
-      userPermissions = JSON.parse(fs.readFileSync(permissionFilePath, "utf-8"));
+      const fileContent = fs.readFileSync(permissionFilePath, "utf-8").trim();
+      if (fileContent) userPermissions = JSON.parse(fileContent);
     } catch (e) {
       console.error("Failed to parse permission.json: " + e);
     }
   }
 
   const { body, threadID } = event;
-  const parts = body.trim().split(/\s+/); // কমান্ড এবং ইউআইডি আলাদা করা
-  const commandName = parts[0].toLowerCase(); // -permission1
-  const targetUID = parts[1]; // ইউজারের UID
+  const parts = body.trim().split(/\s+/);
+  const commandName = parts[0].toLowerCase();
+  const targetUID = parts[1];
 
   if (!targetUID) return api.sendMessage("Usage: -permission1 <uid> or -permission2 <uid>", threadID);
-
-  // check valid UID
   if (!/^\d+$/.test(targetUID)) return api.sendMessage("Invalid UID. Only numbers allowed.", threadID);
 
   let level = 0;
@@ -44,10 +47,10 @@ module.exports.run = async function({ api, event }) {
   userPermissions[targetUID] = level;
 
   try {
-    fs.writeFileSync(permissionFilePath, JSON.stringify(userPermissions, null, 2));
+    fs.writeFileSync(permissionFilePath, JSON.stringify(userPermissions, null, 2), "utf-8");
     return api.sendMessage(`✅ UID ${targetUID} has been granted permission level ${level}`, threadID);
   } catch (err) {
     console.error(err);
-    return api.sendMessage("❌ Failed to update permission.json", threadID);
+    return api.sendMessage("❌ Failed to update permission.json. Check file permissions.", threadID);
   }
 };
