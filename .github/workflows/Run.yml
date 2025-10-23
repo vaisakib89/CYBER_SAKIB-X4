@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    - cron: "55 */6 * * *"   # প্রতি ৫ ঘণ্টা ৫৫ মিনিট পর auto run হবে
+    - cron: "55 */6 * * *"   # প্রতি ৫ ঘণ্টা ৫৫ মিনিট পর পর auto run হবে (approx)
 
 jobs:
   build:
@@ -19,28 +19,31 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version: '20'
 
-      - name: Install dependencies safely
+      - name: Clean & Update Dependencies
         run: |
           echo "🧹 Cleaning old modules and cache..."
           rm -rf node_modules package-lock.json
           npm cache clean --force
-
-          echo "📦 Installing updated versions..."
+          
+          echo "📦 Installing updated versions of deprecated packages..."
           npm install npmlog@7.0.1 gauge@5.0.2 are-we-there-yet@4.0.2 --save
+
+          echo "📥 Installing all dependencies..."
           npm install
 
-      - name: Fix vulnerabilities automatically
+      - name: Fix Vulnerabilities
         run: |
-          echo "🛠️ Running npm audit fix..."
+          echo "🛠️ Running security fixes..."
           npm audit fix || true
           npm audit fix --force || true
 
-      - name: Build & Deploy Bot
-        run: |
-          echo "🚀 Starting bot deployment..."
-          npm run build || npm start
+      - name: Run name check
+        run: node main/botdata/check-names.js
 
-      - name: Success Log
-        run: echo "✅ Bot deployed successfully!"
+      - name: Start CYBER-SAKIB Bot
+        run: npm start
+
+      - name: ✅ Success Log
+        run: echo "command - successfully deployed CYBER-SAKIB 🚀"
