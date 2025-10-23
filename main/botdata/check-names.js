@@ -1,4 +1,4 @@
-// main/botdata/check-names.js
+// check-names.js
 const fs = require('fs');
 const path = require('path');
 
@@ -10,10 +10,10 @@ const allowedNames = [
   '♕ 𝐒𝐀𝐊𝐈𝐁 ♕'
 ];
 
-// project root থেকে scripts/commands ফোল্ডার খুঁজবে
-const projectRoot = process.cwd();
-const searchDir = path.join(projectRoot, 'scripts', 'commands');
+// চেক করার ফোল্ডার
+const searchDir = path.join(__dirname, '..', 'scripts', 'commands');
 
+// ফোল্ডার ট্রাভার্স করার ফাংশন
 function walkDir(dir, filelist = []) {
   if (!fs.existsSync(dir)) return filelist;
   const files = fs.readdirSync(dir);
@@ -29,16 +29,25 @@ function walkDir(dir, filelist = []) {
   return filelist;
 }
 
+// সব .js ফাইল পড়া
 const allFiles = walkDir(searchDir);
 
 if (allFiles.length === 0) {
-  console.error(`⛔️ কোনো .js স্ক্রিপ্ট ফাইল পাওয়া যায়নি: ${searchDir}`);
+  console.error('⛔️ কোনো .js স্ক্রিপ্ট ফাইল পাওয়া যায়নি: scripts/commands ফোল্ডারে।');
   process.exit(1);
 }
 
+// সব ফাইলের কনটেন্ট একত্র করা
 const contents = allFiles.map(f => fs.readFileSync(f, 'utf8')).join('\n\n/* file boundary */\n\n');
 
-const missing = allowedNames.filter(name => !contents.includes(name));
+// কনটেন্ট থেকে whitespaces ও newlines রিমুভ এবং lowercase করা
+const normalizedContents = contents.replace(/\s+/g, '').toLowerCase();
+
+// missing নাম চেক করা
+const missing = allowedNames.filter(name => {
+  const normalizedName = name.replace(/\s+/g, '').toLowerCase();
+  return !normalizedContents.includes(normalizedName);
+});
 
 if (missing.length > 0) {
   console.error('⛔️ Build failed — এই অনুমোদিত নাম/ফরম্যাট(গুলো) নেই:');
