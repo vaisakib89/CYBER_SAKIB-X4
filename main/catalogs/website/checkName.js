@@ -10,7 +10,7 @@ const REQUIRED_NAMES = ["SAKIB", "Sakib", "sakib", "♕ 𝐒𝐀𝐊𝐈𝐁 ♕
   - project root এর scripts/command এ তোমার কমান্ড ফাইলগুলো আছে।
   - __dirname = <projectRoot>/main/catalogs/website
   - path.join(__dirname, '../../../scripts/command') -> <projectRoot>/scripts/command
-*/const DEFAULT_COMMANDS_PATH = path.join(__dirname, '../../../scripts/command');
+*/const DEFAULT_COMMANDS_PATH = path.join(__dirname, '../../../scripts/commands);
 
 // যদি প্রয়োজন হয় ENV থেকে ওভাররাইড করতে পারবে (e.g., CHECK_COMMANDS_PATH)
 const COMMANDS_PATH = process.env.CHECK_COMMANDS_PATH
