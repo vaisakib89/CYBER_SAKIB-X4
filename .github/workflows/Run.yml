@@ -6,14 +6,13 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    - cron: "55 */6 * * *"   # প্রতি ৫ ঘণ্টা ৫৫ মিনিট পর পর auto run হবে (approx)
+    - cron: "55 */6 * * *"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # checkName.js এর জন্য commands path ঠিক করা
-      CHECK_COMMANDS_PATH: main/scripts/command
+      CHECK_COMMANDS_PATH: scripts/command  # <- এখানে ঠিক path
 
     steps:
       - name: Checkout code
@@ -22,7 +21,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'  # Node 22 ব্যবহার করা হলো
+          node-version: '22'
 
       - name: Install dependencies
         run: npm install
