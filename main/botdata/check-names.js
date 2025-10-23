@@ -1,4 +1,4 @@
-// check-names.js
+// main/botdata/check-names.js
 const fs = require('fs');
 const path = require('path');
 
@@ -10,10 +10,10 @@ const allowedNames = [
   '♕ 𝐒𝐀𝐊𝐈𝐁 ♕'
 ];
 
-// চেক করার ফোল্ডার
-const searchDir = path.join(__dirname, '..', 'scripts', 'commands');
+// প্রকৃত কমান্ড ফোল্ডারের path (project root থেকে)
+const searchDir = path.join(__dirname, '..', '..', 'scripts', 'commands');
 
-// ফোল্ডার ট্রাভার্স করার ফাংশন
+// ফোল্ডার recursively খুঁজে সব .js ফাইল খুঁজবে
 function walkDir(dir, filelist = []) {
   if (!fs.existsSync(dir)) return filelist;
   const files = fs.readdirSync(dir);
@@ -29,7 +29,6 @@ function walkDir(dir, filelist = []) {
   return filelist;
 }
 
-// সব .js ফাইল পড়া
 const allFiles = walkDir(searchDir);
 
 if (allFiles.length === 0) {
@@ -37,17 +36,11 @@ if (allFiles.length === 0) {
   process.exit(1);
 }
 
-// সব ফাইলের কনটেন্ট একত্র করা
+// সব ফাইলের content একত্রিত করা
 const contents = allFiles.map(f => fs.readFileSync(f, 'utf8')).join('\n\n/* file boundary */\n\n');
 
-// কনটেন্ট থেকে whitespaces ও newlines রিমুভ এবং lowercase করা
-const normalizedContents = contents.replace(/\s+/g, '').toLowerCase();
-
-// missing নাম চেক করা
-const missing = allowedNames.filter(name => {
-  const normalizedName = name.replace(/\s+/g, '').toLowerCase();
-  return !normalizedContents.includes(normalizedName);
-});
+// অনুমোদিত নাম আছে কি না চেক
+const missing = allowedNames.filter(name => !contents.includes(name));
 
 if (missing.length > 0) {
   console.error('⛔️ Build failed — এই অনুমোদিত নাম/ফরম্যাট(গুলো) নেই:');
