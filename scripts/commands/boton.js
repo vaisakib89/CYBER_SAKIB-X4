@@ -5,7 +5,7 @@ module.exports.config = {
   name: "boton",
   version: "1.0.0",
   permission: 2, // 2 = Admin, Operator, or Owner
-  credits: "SAKIB",
+  credits: "SAKIh",
   description: "Turn the bot ON",
   prefix: true,
   category: "system",
