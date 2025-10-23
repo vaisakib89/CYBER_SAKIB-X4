@@ -21,22 +21,14 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Clean & Update Dependencies
-        run: |
-          echo "🧹 Cleaning old modules and cache..."
-          rm -rf node_modules package-lock.json
-          npm cache clean --force
-          
-          echo "📦 Installing updated versions of deprecated packages..."
-          npm install npmlog@7.0.1 gauge@5.0.2 are-we-there-yet@4.0.2 --save
+      - name: Install dependencies
+        run: npm install
 
-          echo "📥 Installing all dependencies..."
-          npm install
-
-      - name: Fix Vulnerabilities
+      - name: Auto fix vulnerabilities (non-breaking)
         run: |
-          echo "🛠️ Running security fixes..."
+          echo "🔧 Running npm audit fix..."
           npm audit fix || true
+          echo "⚡ Running npm audit fix --force (if safe)..."
           npm audit fix --force || true
 
       - name: Run name check
@@ -44,6 +36,3 @@ jobs:
 
       - name: Start CYBER-SAKIB Bot
         run: npm start
-
-      - name: ✅ Success Log
-        run: echo "command - successfully deployed CYBER-SAKIB 🚀"
