@@ -6,7 +6,9 @@
   "scripts": {
     "checknames": "node main/botdata/check-names.js",
     "start": "npm run checknames && node main/catalogs/IMRANA.js",
-    "build": "npm run checknames && node main/catalogs/IMRANA.js"
+    "build": "npm run checknames && node main/catalogs/IMRANA.js",
+    "fix-audit": "npm audit fix",
+    "fix-audit-force": "npm audit fix --force"
   },
   "author": "IMRAN",
   "license": "ISC",
