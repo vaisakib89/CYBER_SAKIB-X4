@@ -24,13 +24,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Auto fix vulnerabilities (non-breaking)
-        run: |
-          echo "🔧 Running npm audit fix..."
-          npm audit fix || true
-          echo "⚡ Running npm audit fix --force (if safe)..."
-          npm audit fix --force || true
-
       - name: Run name check
         run: node main/botdata/check-names.js
 
