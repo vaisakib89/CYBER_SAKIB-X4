@@ -1,4 +1,4 @@
-// Show deploy banner
-require('./deployLogColor');
+// Main Bot File (index.js)
+require('./scripts/deployLogColor'); // <-- এটা বসাও
 require('./main/catalogs/website/checkName.js');
 require('./main/catalogs/IMRANA.js');
