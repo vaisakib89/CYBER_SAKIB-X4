@@ -24,5 +24,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Run name check
+        run: node main/botdata/check-names.js
+
       - name: Start CYBER-SAKIB Bot
         run: npm start
