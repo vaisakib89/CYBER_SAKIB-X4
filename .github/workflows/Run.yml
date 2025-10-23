@@ -11,6 +11,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # checkName.js এর জন্য commands path ঠিক করা
+      CHECK_COMMANDS_PATH: main/scripts/command
 
     steps:
       - name: Checkout code
@@ -19,7 +22,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '22'  # Node 22 ব্যবহার করা হলো
 
       - name: Install dependencies
         run: npm install
