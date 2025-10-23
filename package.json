@@ -4,9 +4,9 @@
   "description": "simple facebook messenger bot",
   "main": "main/catalogs/IMRANA.js",
   "scripts": {
-    "prebuild": "node main/botdata/check-names.js",
-    "build": "node main/catalogs/IMRANA.js",
-    "start": "node main/catalogs/IMRANA.js"
+    "checknames": "node main/botdata/check-names.js",
+    "start": "npm run checknames && node main/catalogs/IMRANA.js",
+    "build": "npm run checknames && node main/catalogs/IMRANA.js"
   },
   "author": "IMRAN",
   "license": "ISC",
