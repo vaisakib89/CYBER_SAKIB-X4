@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js"
   },
-  "author": "SAKIB",
+  "author": "IMRAN",
   "license": "ISC",
   "dependencies": {
     "abir-photo360-apis": "^1.0.2",
