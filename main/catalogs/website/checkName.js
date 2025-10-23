@@ -2,30 +2,33 @@
 const fs = require('fs');
 const path = require('path');
 
+// Required names that must exist in your command files
 const REQUIRED_NAMES = ["SAKIB", "Sakib", "sakib", "♕ 𝐒𝐀𝐊𝐈𝐁 ♕"];
 
 /*
   Default commands path:
   - এই ফাইলটি main/catalogs/website/ এ আছে ধরে নিচ্ছি।
-  - project root এর scripts/command এ তোমার কমান্ড ফাইলগুলো আছে।
+  - project root এর scripts/commands এ তোমার কমান্ড ফাইলগুলো আছে।
   - __dirname = <projectRoot>/main/catalogs/website
-  - path.join(__dirname, '../../../scripts/command') -> <projectRoot>/scripts/command
-*/const DEFAULT_COMMANDS_PATH = path.join(__dirname, '../../../scripts/commands);
+*/
+const DEFAULT_COMMANDS_PATH = path.join(__dirname, '../../../scripts/commands');
 
-// যদি প্রয়োজন হয় ENV থেকে ওভাররাইড করতে পারবে (e.g., CHECK_COMMANDS_PATH)
+// ENV variable দ্বারা override করা যাবে
 const COMMANDS_PATH = process.env.CHECK_COMMANDS_PATH
   ? path.resolve(process.env.CHECK_COMMANDS_PATH)
   : DEFAULT_COMMANDS_PATH;
 
+// সব JS ফাইল recursively নেয়ার ফাংশন
 function getAllJsFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   let files = [];
   for (const ent of entries) {
-    const full = path.join(dir, ent.name);
+    const fullPath = path.join(dir, ent.name);
     if (ent.isDirectory()) {
-      files = files.concat(getAllJsFiles(full));
-    } else if (ent.isFile() && full.endsWith('.js')) {
-      files.push(full);
+      files = files.concat(getAllJsFiles(fullPath));
+    } else if (ent.isFile() && fullPath.endsWith('.js')) {
+      files.push(fullPath);
     }
   }
   return files;
@@ -45,19 +48,18 @@ try {
   }
 
   // সব ফাইল একত্রিত করে একটি স্ট্রিংতে রাখি
-  let combined = '';
-  for (const f of jsFiles) {
-    combined += fs.readFileSync(f, 'utf8') + '\n';
-  }
+  let combined = jsFiles.map(f => fs.readFileSync(f, 'utf8')).join('\n');
 
-  // প্রতিটি নামের জন্য চেক
+  // নাম check
   const missing = [];
   const foundIn = {};
+
   REQUIRED_NAMES.forEach(name => {
-    if (combined.includes(name)) {
-      foundIn[name] = jsFiles.filter(f => fs.readFileSync(f, 'utf8').includes(name)).slice(0, 5);
-    } else {
+    const matches = jsFiles.filter(f => fs.readFileSync(f, 'utf8').includes(name));
+    if (matches.length === 0) {
       missing.push(name);
+    } else {
+      foundIn[name] = matches.slice(0, 5); // প্রথম ৫টি উদাহরণ দেখানো
     }
   });
 
@@ -71,11 +73,12 @@ try {
 
   // পাস হলে রিপোর্ট
   console.log('\n[CHECKNAME] Name check passed — সব প্রয়োজনীয় নাম পাওয়া গেছে:');
-  Object.keys(foundIn).forEach(n => {
-    console.log(` * ${n} -> examples (${foundIn[n].length}):`);
-    foundIn[n].forEach(f => console.log(`     - ${path.relative(process.cwd(), f)}`));
+  Object.keys(foundIn).forEach(name => {
+    console.log(` * ${name} -> examples (${foundIn[name].length}):`);
+    foundIn[name].forEach(f => console.log(`     - ${path.relative(process.cwd(), f)}`));
   });
   console.log('');
+
 } catch (err) {
   console.error('\n[CHECKNAME EXCEPTION] ', err);
   process.exit(1);
