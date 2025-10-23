@@ -6,13 +6,11 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    - cron: "55 */6 * * *"
+    - cron: "55 */6 * * *" # প্রতি ৫ ঘণ্টা ৫৫ মিনিট পর পর auto run হবে
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      CHECK_COMMANDS_PATH: scripts/command  # <- এখানে ঠিক path
 
     steps:
       - name: Checkout code
@@ -21,10 +19,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
+
+      - name: Set commands path environment variable
+        run: echo "CHECK_COMMANDS_PATH=$GITHUB_WORKSPACE/scripts/commands" >> $GITHUB_ENV
 
       - name: Start CYBER-SAKIB Bot
         run: npm start
