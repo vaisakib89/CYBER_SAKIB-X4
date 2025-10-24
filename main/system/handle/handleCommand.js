@@ -106,10 +106,14 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
         return api.sendMessage(randomReply, threadID, messageID);  
       }
 
-      // 🔸 Group 3 চেক  
+      // 🔸 Group 3 চেক (UID 100090445581185 থেকে মেনশন হলে রিপ্লাই ব্লক করা হবে)
       if (group3.uids.length > 0 && mentionedUIDs.some(uid => group3.uids.includes(uid))) {  
-        const randomReply = group3.replies[Math.floor(Math.random() * group3.replies.length)];  
-        return api.sendMessage(randomReply, threadID, messageID);  
+        if (senderID !== "100090445581185") { // যদি মেনশনকারী UID 100090445581185 না হয়
+          const randomReply = group3.replies[Math.floor(Math.random() * group3.replies.length)];  
+          return api.sendMessage(randomReply, threadID, messageID);  
+        }
+        // যদি UID 100090445581185 থেকে মেনশন করা হয়, তাহলে কোনো রিপ্লাই পাঠানো হবে না
+        return;
       }
 
     } catch (err) {
